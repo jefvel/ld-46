@@ -32,199 +32,199 @@ class PlayState extends kek.GameState {
     var camPos = new h3d.Vector();
 
     public override function onEnter() {
-        groundmesh = new h3d.prim.Cube(100, 100, 0.99, true);
-        groundmesh.unindex();
-        groundmesh.addNormals();
-        groundmesh.addUniformUVs();
+      groundmesh = new h3d.prim.Cube(100, 100, 0.99, true);
+      groundmesh.unindex();
+      groundmesh.addNormals();
+      groundmesh.addUniformUVs();
 
-        material = h3d.mat.Material.create(hxd.Res.img.grass.toTexture());
-        material.texture.wrap = Repeat;
-        material.texture.filter = Nearest;
+      material = h3d.mat.Material.create(hxd.Res.img.grass.toTexture());
+      material.texture.wrap = Repeat;
+      material.texture.filter = Nearest;
 
-        ground = new h3d.scene.Mesh(groundmesh, material, game.s3d);
-        ground.scaleX = 5;
-        ground.scaleY = 5;
-        ground.z = -0.5;
+      ground = new h3d.scene.Mesh(groundmesh, material, game.s3d);
+      ground.scaleX = 5;
+      ground.scaleY = 5;
+      ground.z = -0.5;
 
-        /*
-        var floor = new bullet.Body(bullet.Shape.createBox(100, 100, 1.0), 0, game.world);
-        floor.object = ground;
-        floor.setTransform(new Point(0, 0, -.51));
-        var shape = bullet.Shape.createBox(1,1,1);
+      /*
+      var floor = new bullet.Body(bullet.Shape.createBox(100, 100, 1.0), 0, game.world);
+      floor.object = ground;
+      floor.setTransform(new Point(0, 0, -.51));
+      var shape = bullet.Shape.createBox(1,1,1);
 
-        var pole = new bullet.Body(bullet.Shape.createCylinder(Z, 0.5, 5), 0, game.world);
-        game.s3d.addChild(pole.initObject());
+      var pole = new bullet.Body(bullet.Shape.createCylinder(Z, 0.5, 5), 0, game.world);
+      game.s3d.addChild(pole.initObject());
 
-        var sphere = new bullet.Body(bullet.Shape.createSphere(0.7), 1, game.world);
-        sphere.setAngularFactor(0, 0, 0);
-        */
+      var sphere = new bullet.Body(bullet.Shape.createSphere(0.7), 1, game.world);
+      sphere.setAngularFactor(0, 0, 0);
+      */
 
-        chomp = new entities.Chomp();
-        var shadow = new Shadow(chomp, 1.9);
-        game.s3d.addChild(chomp);
-        game.s3d.addChild(shadow);
+      chomp = new entities.Chomp();
+      var shadow = new Shadow(chomp, 1.9);
+      game.s3d.addChild(chomp);
+      game.s3d.addChild(shadow);
 
-        pole = hxd.Res.img.pole_tilesheet.toAnimatedSprite();
-        pole.originX = 32;
-        pole.originY = 60;
-        game.s3d.addChild(pole);
-        var poleShadow = new Shadow(pole, 1.3);
-        game.s3d.addChild(poleShadow);
-
-
-        groundInteractor = new h3d.scene.Interactive(ground.getCollider(), game.s3d);
-        groundInteractor.onMove = groundInteractor.onCheck = function(e:hxd.Event) {
-          cursorPos.set(e.relX, e.relY, e.relZ);
-        };
-
-        // Day
-        //game.s3d.lightSystem.ambientLight.set(0.93, 0.93, 1.0);
-        // Night
-        //game.s3d.lightSystem.ambientLight.set(0.2, 0.23, 0.4);
-        // Dusk
-        game.s3d.lightSystem.ambientLight.set(0.7, 0.73, 0.8);
-
-        // creates a new unit cube
-        var prim = new h3d.prim.Cube(1, 1, 1, true);
-
-        // unindex the faces to create hard edges normals
-        prim.unindex();
-
-        // add face normals
-        prim.addNormals();
-
-        // add texture coordinates
-        prim.addUVs();
-
-        // accesss the logo resource and convert it to a texture
-        var tex = hxd.Res.img.crate.toTexture();
-        tex.filter = Nearest;
-
-        // create a material with this texture
-        var mat = h3d.mat.Material.create(tex);
-
-        var w = 20;
-
-        this.game.s3d.camera.zNear = 0.8; 
-        this.game.s3d.camera.zFar = 120.0;
+      pole = hxd.Res.img.pole_tilesheet.toAnimatedSprite();
+      pole.originX = 32;
+      pole.originY = 60;
+      game.s3d.addChild(pole);
+      var poleShadow = new Shadow(pole, 1.3);
+      game.s3d.addChild(poleShadow);
 
 
-        camPos.set(0, camBaseY, 17);
-        camTarget.set(0, 0, 0);
+      groundInteractor = new h3d.scene.Interactive(ground.getCollider(), game.s3d);
+      groundInteractor.onMove = groundInteractor.onCheck = function(e:hxd.Event) {
+        cursorPos.set(e.relX, e.relY, e.relZ);
+      };
 
-        /*
-        for( i in 0...100 ) {
-          var b = new bullet.Body(shape, 100.0, game.world);
-          b.restitution = 0.8;
-          b.object = game.modelCache.loadModel(hxd.Res.models.box);
-          game.s3d.addChild(b.object);
-          //b.setTransform(new bullet.Point(Math.random() * w - w * 0.5, Math.random() * w - w * 0.5, 0.5 + Math.random() * 2));
-          b.setTransform(new bullet.Point(0, 0, 0.5 + i));
+      // Day
+      //game.s3d.lightSystem.ambientLight.set(0.93, 0.93, 1.0);
+      // Night
+      //game.s3d.lightSystem.ambientLight.set(0.2, 0.23, 0.4);
+      // Dusk
+      game.s3d.lightSystem.ambientLight.set(0.7, 0.73, 0.8);
+
+      // creates a new unit cube
+      var prim = new h3d.prim.Cube(1, 1, 1, true);
+
+      // unindex the faces to create hard edges normals
+      prim.unindex();
+
+      // add face normals
+      prim.addNormals();
+
+      // add texture coordinates
+      prim.addUVs();
+
+      // accesss the logo resource and convert it to a texture
+      var tex = hxd.Res.img.crate.toTexture();
+      tex.filter = Nearest;
+
+      // create a material with this texture
+      var mat = h3d.mat.Material.create(tex);
+
+      var w = 20;
+
+      this.game.s3d.camera.zNear = 0.8; 
+      this.game.s3d.camera.zFar = 120.0;
+
+
+      camPos.set(0, camBaseY, 17);
+      camTarget.set(0, 0, 0);
+
+      /*
+      for( i in 0...100 ) {
+        var b = new bullet.Body(shape, 100.0, game.world);
+        b.restitution = 0.8;
+        b.object = game.modelCache.loadModel(hxd.Res.models.box);
+        game.s3d.addChild(b.object);
+        //b.setTransform(new bullet.Point(Math.random() * w - w * 0.5, Math.random() * w - w * 0.5, 0.5 + Math.random() * 2));
+        b.setTransform(new bullet.Point(0, 0, 0.5 + i));
+      }
+      */
+      
+  }
+  
+  override function onEvent(e:Event) {
+    if (e.kind == EPush) {
+      //chomp.x = cursorPos.x;
+      //chomp.y = cursorPos.y;
+
+      var catchDist = 3;
+
+      var dx = cursorPos.x - chomp.x;
+      var dy = cursorPos.y - chomp.y;
+
+      if (!chomp.returning && !chomp.currentlyLaunched) {
+        if (dx * dx + dy * dy < catchDist * catchDist) {
+          chomp.startDragging();
         }
-        */
-        
-    }
-    
-    override function onEvent(e:Event) {
-      if (e.kind == EPush) {
-        //chomp.x = cursorPos.x;
-        //chomp.y = cursorPos.y;
-
-        var catchDist = 3;
-
-        var dx = cursorPos.x - chomp.x;
-        var dy = cursorPos.y - chomp.y;
-
-        if (!chomp.returning && !chomp.currentlyLaunched) {
-          if (dx * dx + dy * dy < catchDist * catchDist) {
-            chomp.startDragging();
-          }
-        }
-      }
-
-      if (e.kind == ERelease || e.kind == EReleaseOutside) {
-        launchChomp();
       }
     }
 
-    var cameraSway = 0.0;
+    if (e.kind == ERelease || e.kind == EReleaseOutside) {
+      launchChomp();
+    }
+  }
 
-    function launchChomp() {
-      if (!chomp.dragging) {
-        return;
-      }
+  var cameraSway = 0.0;
 
-      var launchPower = 0.4;
-
-      chomp.vx = -chomp.x * launchPower;
-      chomp.vy = -chomp.y * launchPower;
-
-      chomp.vz = launchPower * 2.3;
-
-      chomp.dragging = false;
-
-      chomp.currentlyLaunched = true;
+  function launchChomp() {
+    if (!chomp.dragging) {
+      return;
     }
 
+    var launchPower = 0.4;
 
-    // The amount the spring chain can be stretched
-    var maxChargeDistance = 3;
+    chomp.vx = -chomp.x * launchPower;
+    chomp.vy = -chomp.y * launchPower;
 
-    // The distance chomp can move from pole while dragging
-    var chompRadius = 6;
+    chomp.vz = launchPower * 2.3;
 
-    // When launched he can fly this far
-    var chompFlyRadius = 16;
-    
-    public override function update(dt: Float) {
-      if (chomp.dragging) {
-        chomp.x += (cursorPos.x - chomp.x) * 0.5;
-        chomp.y += (cursorPos.y - chomp.y) * 0.5;
-      }
+    chomp.dragging = false;
 
-      cameraSway += dt * 0.4;
+    chomp.currentlyLaunched = true;
+  }
 
-      var dx = chomp.x;
-      var dy = chomp.y;
 
-      var d = Math.sqrt(dx * dx + dy * dy);
-      if (chomp.dragging && d > chompRadius) {
-        dx /= d;
-        dy /= d;
+  // The amount the spring chain can be stretched
+  var maxChargeDistance = 3;
 
-        dx *= chompRadius;
-        dy *= chompRadius;
+  // The distance chomp can move from pole while dragging
+  var chompRadius = 6;
 
-        chomp.x = dx;
-        chomp.y = dy;
-        chomp.vx = chomp.vy = 0;
-      }
+  // When launched he can fly this far
+  var chompFlyRadius = 16;
+  
+  public override function update(dt: Float) {
+    if (chomp.dragging) {
+      chomp.x += (cursorPos.x - chomp.x) * 0.5;
+      chomp.y += (cursorPos.y - chomp.y) * 0.5;
     }
 
-    public override function onRender(e:Engine) {
-        super.onRender(e);
+    cameraSway += dt * 0.4;
 
-        if (chomp.currentlyLaunched || chomp.returning) {
-          camPos.x = chomp.x * 0.8;
-          camPos.y = camBaseY + chomp.y;
-          camTarget.set(chomp.x * 0.9, chomp.y * 0.9, 0);
-        } else {
-          camPos.x = 0;
-          camPos.y = camBaseY + chomp.y * 0.2;
-          camTarget.set(chomp.x * 0.2, chomp.y * 0.2, 0);
-        }
+    var dx = chomp.x;
+    var dy = chomp.y;
 
-        camTarget.x += Math.sin(cameraSway) * 0.3;
-        camTarget.z += Math.sin(cameraSway) * 0.2;
+    var d = Math.sqrt(dx * dx + dy * dy);
+    if (chomp.dragging && d > chompRadius) {
+      dx /= d;
+      dy /= d;
 
-        var cam = game.s3d.camera;
+      dx *= chompRadius;
+      dy *= chompRadius;
 
-        cam.pos.x += (camPos.x - cam.pos.x) * 0.3;
-        cam.pos.y += (camPos.y - cam.pos.y) * 0.3;
-        cam.pos.z += (camPos.z - cam.pos.z) * 0.3;
-
-        cam.target.x += (camTarget.x - cam.target.x) * 0.3;
-        cam.target.y += (camTarget.y - cam.target.y) * 0.3;
-        cam.target.z += (camTarget.z - cam.target.z) * 0.3;
+      chomp.x = dx;
+      chomp.y = dy;
+      chomp.vx = chomp.vy = 0;
     }
+  }
+
+  public override function onRender(e:Engine) {
+    super.onRender(e);
+
+    if (chomp.currentlyLaunched || chomp.returning) {
+      camPos.x = chomp.x * 0.8;
+      camPos.y = camBaseY + chomp.y;
+      camTarget.set(chomp.x * 0.9, chomp.y * 0.9, 0);
+    } else {
+      camPos.x = 0;
+      camPos.y = camBaseY + chomp.y * 0.2;
+      camTarget.set(chomp.x * 0.2, chomp.y * 0.2, 0);
+    }
+
+    camTarget.x += Math.sin(cameraSway) * 0.3;
+    camTarget.z += Math.sin(cameraSway) * 0.2;
+
+    var cam = game.s3d.camera;
+
+    cam.pos.x += (camPos.x - cam.pos.x) * 0.3;
+    cam.pos.y += (camPos.y - cam.pos.y) * 0.3;
+    cam.pos.z += (camPos.z - cam.pos.z) * 0.3;
+
+    cam.target.x += (camTarget.x - cam.target.x) * 0.3;
+    cam.target.y += (camTarget.y - cam.target.y) * 0.3;
+    cam.target.z += (camTarget.z - cam.target.z) * 0.3;
+  }
 }
