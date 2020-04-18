@@ -42,7 +42,7 @@
 		{
 			"text": "Run JS",
 			"color": "yellow",
-			"command": "cd web && start index.html",
+			"command": "cd build/web && start index.html",
 			"alignment": "right",
 			"skipTerminateQuickPick": false,
 			"priority": -21

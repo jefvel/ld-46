@@ -18,7 +18,7 @@ class PlayState extends kek.GameState {
     var material : h3d.mat.Material;
 
     public override function onEnter() {
-        groundmesh = new h3d.prim.Cube(100, 100, 1.0, true);
+        groundmesh = new h3d.prim.Cube(100, 100, 0.99, true);
         groundmesh.unindex();
         groundmesh.addNormals();
         groundmesh.addUniformUVs();
@@ -27,6 +27,7 @@ class PlayState extends kek.GameState {
         material.texture.wrap = Repeat;
         material.texture.filter = Nearest;
         ground = new h3d.scene.Mesh(groundmesh, material);
+        ground.z = -0.5;
         game.s3d.addChild(ground);
 
         /*
@@ -44,13 +45,15 @@ class PlayState extends kek.GameState {
         var chomp = new entities.Chomp();
 
         game.addEntity(chomp);
+        var shadow = new Shadow(chomp, 1.9);
+        game.s3d.addChild(shadow);
 
         // Day
         //game.s3d.lightSystem.ambientLight.set(0.93, 0.93, 1.0);
         // Night
         //game.s3d.lightSystem.ambientLight.set(0.2, 0.23, 0.4);
         // Dusk
-        game.s3d.lightSystem.ambientLight.set(0.4, 0.43, 0.6);
+        game.s3d.lightSystem.ambientLight.set(0.6, 0.63, 0.7);
 
         // creates a new unit cube
         var prim = new h3d.prim.Cube(1, 1, 1, true);

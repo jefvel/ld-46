@@ -11,7 +11,7 @@ class Chomp extends Entity {
         sprite.originY = 32;
         this.addChild(sprite);
         this.vy = 0.05;
-        this.z = 2;
+        this.z = 0.9;
     }
 
     override function update(dt:Float) {
