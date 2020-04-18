@@ -2,7 +2,7 @@
 
 -lib heaps
 
--lib bullet
+#-lib bullet
 
 -lib hxbit
 -lib hide

@@ -23,7 +23,9 @@ class Game extends hxd.App {
 
     var _initialState : kek.GameState;
 
-	public var world : kek.physics.PhysicsWorld;
+    //public var world : kek.physics.PhysicsWorld;
+    
+    public var entities : Array<Entity>;
 
     /**
      *  The width of the screen in scaled pixels
@@ -34,10 +36,22 @@ class Game extends hxd.App {
      */
     public var screenHeight(default, null) : Int;
 
+    public var modelCache : h3d.prim.ModelCache;
+
     public function new(?initialState) {
         super();
         _instance = this;
         _initialState = initialState;
+    }
+
+    public function addEntity(e: Entity) {
+        entities.push(e);
+        s3d.addChild(e);
+    }
+
+    public function removeEntity(e: Entity) {
+        entities.remove(e);
+        s3d.removeChild(e);
     }
 
     public static function instance() {
@@ -65,7 +79,7 @@ class Game extends hxd.App {
 
         engine.backgroundColor = 0xDDDEFE;
         engine.autoResize = true;
-
+        modelCache = new h3d.prim.ModelCache();
         /*
         if (true) {
             renderer = new graphics.GameRenderer();
@@ -82,8 +96,8 @@ class Game extends hxd.App {
     }
 
     function initPhysics() {
-		world = new kek.physics.PhysicsWorld(s3d);
-		world.setGravity(0, 0, Const.GRAVITY);
+		//world = new kek.physics.PhysicsWorld(s3d);
+		//world.setGravity(0, 0, Const.GRAVITY);
     }
 
     function initGame() {
@@ -93,9 +107,11 @@ class Game extends hxd.App {
         }
         #end
 
+        entities = [];
+
         configRenderer();
 
-        initPhysics();
+        //initPhysics();
 
         var w = Window.getInstance();
 
@@ -104,7 +120,6 @@ class Game extends hxd.App {
 #if js
         w.useScreenPixels = false;
 #end
-
 
         // Add filter for pixel perfect 2D rendering.
         s2d.filter = new h2d.filter.Nothing();
@@ -148,6 +163,12 @@ class Game extends hxd.App {
 
 
     function onEvent(e : hxd.Event) {
+        if (this.currentState != null) {
+            this.currentState.onEvent(e);
+        }
+        if (this.childState != null) {
+            this.childState.onEvent(e);
+        }
     }
 
     var timeScale = 1.0;
@@ -174,6 +195,10 @@ class Game extends hxd.App {
         while(timeSinceLast > Const.TICK_TIME) {
             timeSinceLast -= Const.TICK_TIME;
 
+            for (e in entities) {
+                e.update(Const.TICK_TIME);
+            }
+
             if (this.currentState != null) {
                 this.currentState.update(Const.TICK_TIME);
             }
@@ -182,13 +207,13 @@ class Game extends hxd.App {
                 this.childState.update(Const.TICK_TIME);
             }
 
-            world.stepSimulation(Const.TICK_TIME, 2);
+            //world.stepSimulation(Const.TICK_TIME, 2);
         }
     }
 
     public override function render(e : h3d.Engine) {
         e.backgroundColor = s3d.lightSystem.ambientLight.toColor();
-        world.sync();
+        //world.sync();
         if (currentState != null) {
             currentState.onRender(e);
         }
@@ -254,6 +279,7 @@ class Game extends hxd.App {
     }
 
 	static function main() {
-        bullet.Bullet.Init.init(runGame);
+        //bullet.Bullet.Init.init(runGame);
+        runGame();
     }
 }

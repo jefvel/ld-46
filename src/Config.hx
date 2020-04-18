@@ -10,5 +10,6 @@ class Config {
         hxd.res.Config.ignoredExtensions["blend1"] =  true;
         hxd.res.Config.ignoredExtensions["aseprite"] =  true;
         hxd.res.Config.ignoredExtensions["wav.asd"] =  true;
+        hxd.res.Config.extensions["tilesheet"] = "kek.graphics.TileSheet";
     }
 }
