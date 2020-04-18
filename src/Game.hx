@@ -44,14 +44,12 @@ class Game extends hxd.App {
         _initialState = initialState;
     }
 
-    public function addEntity(e: Entity) {
+    function addEntity(e: Entity) {
         entities.push(e);
-        s3d.addChild(e);
     }
 
-    public function removeEntity(e: Entity) {
+    function removeEntity(e: Entity) {
         entities.remove(e);
-        s3d.removeChild(e);
     }
 
     public static function instance() {
