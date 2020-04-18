@@ -23,6 +23,7 @@ class Chicken extends Entity {
     var roamTargetX : Float;
     var roamTargetY : Float;
     var roamTargetRadius = 1.0;
+    var roamLimit = 100.0;
 
     public function new(?parent) {
         super(parent);
@@ -39,6 +40,12 @@ class Chicken extends Entity {
     }
 
     override function update(dt:Float) {
+        super.update(dt);
+
+        if (Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2)) > this.roamLimit) {
+            this.remove();
+        }
+
         switch (this.curBehaviour) {
             case None:
                 return;
@@ -61,7 +68,7 @@ class Chicken extends Entity {
             case Flee:
         }
 
-        super.update(dt);
+
     }
 
     function pickRoamTarget() {
