@@ -33,6 +33,15 @@ class Entity extends h3d.scene.Object {
     }
 
     public function update(dt: Float) {
+        // Clamp max speed
+        var v = new Vector(this.vx, this.vy);
+        if (v.length() > this.maxSpeed) {
+            v.normalize();
+            v.scale3(this.maxSpeed);
+            this.vx = v.x;
+            this.vy = v.y;
+        }
+
         this.x += vx;
         this.y += vy;
         this.z += vz;
@@ -48,14 +57,6 @@ class Entity extends h3d.scene.Object {
             vy *= friction * 0.3;
         }
 
-        // Clamp max speed
-        var v = new Vector(this.vx, this.vy);
-        if (v.length() > this.maxSpeed) {
-            v.normalize();
-            v.scale3(this.maxSpeed);
-            this.vx = v.x;
-            this.vy = v.y;
-        }
         vz += gravitation;
     }
 }

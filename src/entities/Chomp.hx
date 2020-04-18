@@ -66,7 +66,7 @@ class Chomp extends Entity {
                     returning = true;
                 }
             } else {
-                waitTime = 0.5;
+                waitTime = 0.2;
             }
         } else if (returning) {
             moveTo(0, 1);

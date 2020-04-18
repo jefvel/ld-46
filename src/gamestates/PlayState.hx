@@ -10,126 +10,113 @@ import h3d.Engine;
 import h3d.scene.Mesh;
 
 class PlayState extends kek.GameState {
-    public function new() {
-      name = "InGame";
+  public function new() {
+    name = "InGame";
+  }
+
+  var groundmesh : h3d.prim.Cube;
+  var ground : h3d.scene.Object;
+  var material : h3d.mat.Material;
+
+  var groundInteractor : h3d.scene.Interactive;
+
+  var cursorPos = new h3d.col.Point();
+  
+  var chomp: entities.Chomp;
+
+  var pole: kek.graphics.AnimatedSprite;
+
+  var camBaseY = 40.;
+
+  var camTarget = new h3d.Vector();
+  var camPos = new h3d.Vector();
+
+  var enemies : Array<Entity>;
+
+  var arrow : Arrow;
+
+  public override function onEnter() {
+    enemies = [];
+    var meshSize = Const.WORLD_WIDTH / 4;
+    groundmesh = new h3d.prim.Cube(meshSize, meshSize, 0.99, true);
+    groundmesh.unindex();
+    groundmesh.addNormals();
+    groundmesh.addUniformUVs();
+
+    material = h3d.mat.Material.create(hxd.Res.img.grass.toTexture());
+    material.texture.wrap = Repeat;
+    material.texture.filter = Nearest;
+
+    ground = new h3d.scene.Mesh(groundmesh, material, game.s3d);
+    ground.scaleX = Const.WORLD_WIDTH / meshSize;
+    ground.scaleY = Const.WORLD_HEIGHT / meshSize;
+    ground.z = -0.5;
+
+    arrow = new Arrow();
+    game.s3d.addChild(arrow);
+
+    /*
+    var floor = new bullet.Body(bullet.Shape.createBox(100, 100, 1.0), 0, game.world);
+    floor.object = ground;
+    floor.setTransform(new Point(0, 0, -.51));
+    var shape = bullet.Shape.createBox(1,1,1);
+
+    var pole = new bullet.Body(bullet.Shape.createCylinder(Z, 0.5, 5), 0, game.world);
+    game.s3d.addChild(pole.initObject());
+
+    var sphere = new bullet.Body(bullet.Shape.createSphere(0.7), 1, game.world);
+    sphere.setAngularFactor(0, 0, 0);
+    */
+
+    chomp = new entities.Chomp();
+    var shadow = new Shadow(chomp, 1.9);
+    game.s3d.addChild(chomp);
+    game.s3d.addChild(shadow);
+
+    pole = hxd.Res.img.pole_tilesheet.toAnimatedSprite();
+    pole.originX = 32;
+    pole.originY = 60;
+    game.s3d.addChild(pole);
+    var poleShadow = new Shadow(pole, 1.3);
+    game.s3d.addChild(poleShadow);
+
+    groundInteractor = new h3d.scene.Interactive(ground.getCollider(), game.s3d);
+    groundInteractor.onMove = groundInteractor.onCheck = function(e:hxd.Event) {
+      cursorPos.set(e.relX, e.relY, e.relZ);
+    };
+
+    // Day
+    //game.s3d.lightSystem.ambientLight.set(0.93, 0.93, 1.0);
+    // Night
+    //game.s3d.lightSystem.ambientLight.set(0.2, 0.23, 0.4);
+    // Dusk
+    game.s3d.lightSystem.ambientLight.set(0.7, 0.73, 0.8);
+
+    this.game.s3d.camera.zNear = 0.8; 
+    this.game.s3d.camera.zFar = 120.0;
+
+    camPos.set(0, camBaseY, 17);
+    camTarget.set(0, 0, 0);
+    spawnEnemies();
+  }
+
+  function spawnEnemies() {
+    for (i in 0...100) {
+      var imp = new entities.Imp(game.s3d, chomp);
+      var impMinDist = Const.WORLD_HEIGHT * 0.1;
+      var impDist = Const.WORLD_HEIGHT * 0.5;
+      var distance = Math.random() * impDist + impMinDist;
+
+      var angle = -Math.random() * Math.PI;
+
+      imp.x = Math.cos(angle) * distance; //Math.random() * Const.WORLD_WIDTH - Const.WORLD_WIDTH * 0.5;
+      imp.y = Math.sin(angle) * distance; //Math.random() * Const.WORLD_HEIGHT - Const.WORLD_HEIGHT;
+      enemies.push(imp);
     }
-
-    var groundmesh : h3d.prim.Cube;
-    var ground : h3d.scene.Object;
-    var material : h3d.mat.Material;
-
-    var groundInteractor : h3d.scene.Interactive;
-
-    var cursorPos = new h3d.col.Point();
-    
-    var chomp: entities.Chomp;
-
-    var pole: kek.graphics.AnimatedSprite;
-
-    var camBaseY = 40.;
-
-    var camTarget = new h3d.Vector();
-    var camPos = new h3d.Vector();
-
-    public override function onEnter() {
-      groundmesh = new h3d.prim.Cube(100, 100, 0.99, true);
-      groundmesh.unindex();
-      groundmesh.addNormals();
-      groundmesh.addUniformUVs();
-
-      material = h3d.mat.Material.create(hxd.Res.img.grass.toTexture());
-      material.texture.wrap = Repeat;
-      material.texture.filter = Nearest;
-
-      ground = new h3d.scene.Mesh(groundmesh, material, game.s3d);
-      ground.scaleX = 5;
-      ground.scaleY = 5;
-      ground.z = -0.5;
-
-      /*
-      var floor = new bullet.Body(bullet.Shape.createBox(100, 100, 1.0), 0, game.world);
-      floor.object = ground;
-      floor.setTransform(new Point(0, 0, -.51));
-      var shape = bullet.Shape.createBox(1,1,1);
-
-      var pole = new bullet.Body(bullet.Shape.createCylinder(Z, 0.5, 5), 0, game.world);
-      game.s3d.addChild(pole.initObject());
-
-      var sphere = new bullet.Body(bullet.Shape.createSphere(0.7), 1, game.world);
-      sphere.setAngularFactor(0, 0, 0);
-      */
-
-      chomp = new entities.Chomp();
-      var shadow = new Shadow(chomp, 1.9);
-      game.s3d.addChild(chomp);
-      game.s3d.addChild(shadow);
-
-      pole = hxd.Res.img.pole_tilesheet.toAnimatedSprite();
-      pole.originX = 32;
-      pole.originY = 60;
-      game.s3d.addChild(pole);
-      var poleShadow = new Shadow(pole, 1.3);
-      game.s3d.addChild(poleShadow);
-
-
-      groundInteractor = new h3d.scene.Interactive(ground.getCollider(), game.s3d);
-      groundInteractor.onMove = groundInteractor.onCheck = function(e:hxd.Event) {
-        cursorPos.set(e.relX, e.relY, e.relZ);
-      };
-
-      // Day
-      //game.s3d.lightSystem.ambientLight.set(0.93, 0.93, 1.0);
-      // Night
-      //game.s3d.lightSystem.ambientLight.set(0.2, 0.23, 0.4);
-      // Dusk
-      game.s3d.lightSystem.ambientLight.set(0.7, 0.73, 0.8);
-
-      // creates a new unit cube
-      var prim = new h3d.prim.Cube(1, 1, 1, true);
-
-      // unindex the faces to create hard edges normals
-      prim.unindex();
-
-      // add face normals
-      prim.addNormals();
-
-      // add texture coordinates
-      prim.addUVs();
-
-      // accesss the logo resource and convert it to a texture
-      var tex = hxd.Res.img.crate.toTexture();
-      tex.filter = Nearest;
-
-      // create a material with this texture
-      var mat = h3d.mat.Material.create(tex);
-
-      var w = 20;
-
-      this.game.s3d.camera.zNear = 0.8; 
-      this.game.s3d.camera.zFar = 120.0;
-
-
-      camPos.set(0, camBaseY, 17);
-      camTarget.set(0, 0, 0);
-
-      /*
-      for( i in 0...100 ) {
-        var b = new bullet.Body(shape, 100.0, game.world);
-        b.restitution = 0.8;
-        b.object = game.modelCache.loadModel(hxd.Res.models.box);
-        game.s3d.addChild(b.object);
-        //b.setTransform(new bullet.Point(Math.random() * w - w * 0.5, Math.random() * w - w * 0.5, 0.5 + Math.random() * 2));
-        b.setTransform(new bullet.Point(0, 0, 0.5 + i));
-      }
-      */
-      
   }
   
   override function onEvent(e:Event) {
     if (e.kind == EPush) {
-      //chomp.x = cursorPos.x;
-      //chomp.y = cursorPos.y;
-
       var catchDist = 3;
 
       var dx = cursorPos.x - chomp.x;
@@ -170,8 +157,10 @@ class PlayState extends kek.GameState {
   // The amount the spring chain can be stretched
   var maxChargeDistance = 3;
 
+  var launchPower = 0.3;
+
   // The distance chomp can move from pole while dragging
-  var chompRadius = 6;
+  var chompRadius = 8;
 
   // When launched he can fly this far
   var chompFlyRadius = 16;
@@ -180,8 +169,12 @@ class PlayState extends kek.GameState {
     this.spawnChicken(dt);
 
     if (chomp.dragging) {
+      var cy = Math.max(0.1, cursorPos.y);
       chomp.x += (cursorPos.x - chomp.x) * 0.5;
-      chomp.y += (cursorPos.y - chomp.y) * 0.5;
+      chomp.y += (cy - chomp.y) * 0.5;
+
+      var angle = Math.atan2(chomp.y, chomp.x);
+      arrow.setRotation(0, 0, angle);
     }
 
     cameraSway += dt * 0.4;
@@ -205,6 +198,7 @@ class PlayState extends kek.GameState {
 
   public override function onRender(e:Engine) {
     super.onRender(e);
+    arrow.visible = chomp.dragging;
 
     if (chomp.currentlyLaunched || chomp.returning) {
       camPos.x = chomp.x * 0.8;

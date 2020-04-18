@@ -13,6 +13,10 @@ class Const {
 
     public static inline final KEY_REPEAT_DELAY = 0.2;
 
+    public static inline final WORLD_WIDTH = 400;
+    public static inline final WORLD_HEIGHT = 400;
+
+
     // Unit auto spawn params
     public static inline final CHICKEN_SPAWN_RATE = 0.8; // Chickens per second
     public static inline final CHICKEN_SPAWN_RADIUS = 30.0; // Distance from origin where chickens spawn
