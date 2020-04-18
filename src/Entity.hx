@@ -1,10 +1,13 @@
 package;
 import h3d.scene.Object;
+import h3d.Vector;
 
 class Entity extends h3d.scene.Object {
     public var id: Int;
     static var _NEXT_ID = 0;
 
+    
+    public var maxSpeed = 0.0;
     public var vx = 0.0;
     public var vy = 0.0;
     public var vz = 0.0;
@@ -33,6 +36,18 @@ class Entity extends h3d.scene.Object {
             vy *= friction * 0.3;
         } 
 
+        if (this.z > 1.0) {
+            //vz += gravitation;
+        }
+
+        // Clamp max speed
+        var v = new Vector(this.vx, this.vy);
+        if (v.length() > this.maxSpeed) {
+            v.normalize();
+            v.scale3(this.maxSpeed);
+            this.vx = v.x;
+            this.vy = v.y;
+        }
         vz += gravitation;
     }
 }

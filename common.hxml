@@ -5,7 +5,7 @@
 #-lib bullet
 
 -lib hxbit
--lib hide
+# -lib hide
 -lib castle
 -lib hscript
 -lib stb_ogg_sound

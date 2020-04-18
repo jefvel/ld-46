@@ -64,7 +64,6 @@ class PlayState extends kek.GameState {
         var shadow = new Shadow(chomp, 1.9);
         game.s3d.addChild(shadow);
 
-
         pole = hxd.Res.img.pole_tilesheet.toAnimatedSprite();
         pole.originX = 32;
         pole.originY = 60;
