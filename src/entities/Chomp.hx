@@ -15,6 +15,7 @@ class Chomp extends Entity {
 
         this.addChild(sprite);
 
+        this.maxSpeed = 0.24;
         this.vy = 0.05;
         this.z = 0.9;
     }
