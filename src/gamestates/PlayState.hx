@@ -60,8 +60,8 @@ class PlayState extends kek.GameState {
         */
 
         chomp = new entities.Chomp();
-        game.addEntity(chomp);
         var shadow = new Shadow(chomp, 1.9);
+        game.s3d.addChild(chomp);
         game.s3d.addChild(shadow);
 
         pole = hxd.Res.img.pole_tilesheet.toAnimatedSprite();

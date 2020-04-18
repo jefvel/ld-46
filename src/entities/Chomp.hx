@@ -42,6 +42,12 @@ class Chomp extends Entity {
     var waitTime = 0.5;
 
     override function update(dt:Float) {
+        if (currentlyLaunched) {
+            maxSpeed = 10000;
+        } else if (returning) {
+            maxSpeed = 0.24;
+        }
+
         super.update(dt);
 
         var v = Math.sqrt(vx * vx + vy * vy + vz * vz);

@@ -20,6 +20,18 @@ class Entity extends h3d.scene.Object {
         super(parent);
     }
 
+    override function onAdd() {
+        super.onAdd();
+        @:privateAccess
+        Game.instance().addEntity(this);
+    }
+
+    override function onRemove() {
+        super.onRemove();
+        @:privateAccess
+        Game.instance().removeEntity(this);
+    }
+
     public function update(dt: Float) {
         this.x += vx;
         this.y += vy;
