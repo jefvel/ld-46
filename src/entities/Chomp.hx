@@ -11,7 +11,6 @@ class Chomp extends Entity {
         sprite.originX = 32;
         sprite.originY = 64;
 
-        sprite.play("Idle");
 
         this.addChild(sprite);
 
@@ -39,17 +38,34 @@ class Chomp extends Entity {
         moveToY = y;
     }
 
+    var waitTime = 0.5;
+
     override function update(dt:Float) {
         super.update(dt);
+
         var v = Math.sqrt(vx * vx + vy * vy + vz * vz);
 
+        if (dragging) {
+            sprite.play("Aim");
+        } else {
+            sprite.play("Idle");
+        }
+
         if (currentlyLaunched) {
-            if (v < 0.01) {
-                currentlyLaunched = false;
-                returning = true;
+            if (v < 0.1) {
+                waitTime -= dt;
+                if (waitTime <= 0) {
+                    currentlyLaunched = false;
+                    returning = true;
+                }
+            } else {
+                waitTime = 0.5;
             }
         } else if (returning) {
             moveTo(0, 1);
+            if (z <= 0) {
+                vz = 0.2;
+            }
         }
 
         if (movingTo) {

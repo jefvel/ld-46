@@ -148,14 +148,19 @@ class PlayState extends kek.GameState {
       }
     }
 
+    var cameraSway = 0.0;
+
     function launchChomp() {
       if (!chomp.dragging) {
         return;
       }
 
-      chomp.vx = -chomp.x * 0.2;
-      chomp.vy = -chomp.y * 0.2;
-      chomp.vz = 1;
+      var launchPower = 0.4;
+
+      chomp.vx = -chomp.x * launchPower;
+      chomp.vy = -chomp.y * launchPower;
+
+      chomp.vz = launchPower * 2.3;
 
       chomp.dragging = false;
 
@@ -177,6 +182,8 @@ class PlayState extends kek.GameState {
         chomp.x += (cursorPos.x - chomp.x) * 0.5;
         chomp.y += (cursorPos.y - chomp.y) * 0.5;
       }
+
+      cameraSway += dt * 0.4;
 
       var dx = chomp.x;
       var dy = chomp.y;
@@ -207,6 +214,9 @@ class PlayState extends kek.GameState {
           camPos.y = camBaseY + chomp.y * 0.2;
           camTarget.set(chomp.x * 0.2, chomp.y * 0.2, 0);
         }
+
+        camTarget.x += Math.sin(cameraSway) * 0.3;
+        camTarget.z += Math.sin(cameraSway) * 0.2;
 
         var cam = game.s3d.camera;
 
