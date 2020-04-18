@@ -1,0 +1,22 @@
+--macro Config.initConfig()
+
+-lib heaps
+
+-lib bullet
+
+-lib hxbit
+-lib hide
+-lib castle
+-lib hscript
+-lib stb_ogg_sound
+-lib polygonal-ds
+
+-cp src
+
+-D windowTitle=Ludum Dare 46
+#-D windowFixed
+-D windowSize=1280x720
+
+#-D usepak
+
+-main Game

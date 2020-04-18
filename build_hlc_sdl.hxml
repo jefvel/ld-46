@@ -1,0 +1,5 @@
+common.hxml
+
+-lib hlsdl
+
+-hl bin/hlc/_main.c

@@ -1,0 +1,12 @@
+common.hxml
+
+-lib closure
+-D closure_warning_level=QUIET
+-D closure_overwrite
+
+-D no_traces
+
+-js build/web/game.js
+--macro Generate.generateWeb()
+#--cmd google-closure-compiler --compilation_level=SIMPLE_OPTIMIZATIONS --warning_level=QUIET --js=web/game.js --js_output_file=web/game.min.js && mv web/game.min.js web/game.js
+
