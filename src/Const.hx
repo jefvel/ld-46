@@ -13,6 +13,10 @@ class Const {
 
     public static inline final KEY_REPEAT_DELAY = 0.2;
 
+    public static inline final WORLD_WIDTH = 400;
+    public static inline final WORLD_HEIGHT = 400;
+
+
 
     // Physics groups and masks 
     public static inline final AllGroup : UInt16 = -1;
