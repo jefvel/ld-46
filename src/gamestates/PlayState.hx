@@ -177,6 +177,8 @@ class PlayState extends kek.GameState {
   var chompFlyRadius = 16;
   
   public override function update(dt: Float) {
+    this.spawnChicken(dt);
+
     if (chomp.dragging) {
       chomp.x += (cursorPos.x - chomp.x) * 0.5;
       chomp.y += (cursorPos.y - chomp.y) * 0.5;
@@ -226,5 +228,26 @@ class PlayState extends kek.GameState {
     cam.target.x += (camTarget.x - cam.target.x) * 0.3;
     cam.target.y += (camTarget.y - cam.target.y) * 0.3;
     cam.target.z += (camTarget.z - cam.target.z) * 0.3;
+  }
+
+  var chickenSpawn = 0.0;
+  private function spawnChicken(dt:Float) {
+    chickenSpawn += Const.CHICKEN_SPAWN_RATE * dt;
+    if (chickenSpawn > 1.0) {
+      var chicken = new entities.Chicken();
+      var shadow = new Shadow(chicken, 1.0);
+
+      // Set chicken position
+      var spawnAngle = Math.random() * 2.0 * Math.PI;
+      chicken.x = Math.cos(spawnAngle) * (Math.random() * Const.CHICKEN_SPAWN_RADIUS + Const.CHICKEN_SPAWN_RADIUS_MIN);
+      chicken.y = Math.sin(spawnAngle) * (Math.random() * Const.CHICKEN_SPAWN_RADIUS + Const.CHICKEN_SPAWN_RADIUS_MIN);
+      chicken.scale(Const.CHICKEN_SCALE);
+      chicken.z = 2.7;
+      
+      game.s3d.addChild(chicken);
+      game.s3d.addChild(shadow);
+
+      chickenSpawn -= 1.0;
+    }
   }
 }

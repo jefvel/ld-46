@@ -30,9 +30,8 @@ class Chicken extends Entity {
 
         sprite = hxd.Res.img.chicken_tilesheet.toAnimatedSprite();
         sprite.originX = 64;
-        sprite.originY = 64;
+        sprite.originY = 128;
         this.maxSpeed = roamSpeed;
-        this.z = 2.0;
         this.curBehaviour = Behaviour.Idle;
         sprite.play("Idle");
         idleTimer = Math.random() * this.idleTimerMax;
@@ -67,8 +66,6 @@ class Chicken extends Entity {
                 }
             case Flee:
         }
-
-
     }
 
     function pickRoamTarget() {
@@ -80,6 +77,10 @@ class Chicken extends Entity {
         
         this.roamTargetX = this.x + roamX * roamDistance;
         this.roamTargetY = this.y + roamY * roamDistance;
+
+        if (this.roamTargetX < this.x) {
+            this.sprite.flipX = true;
+        }
     }
     
     function moveToRoamTarget(): Bool {
