@@ -17,6 +17,11 @@ class Const {
     public static inline final WORLD_HEIGHT = 400;
 
 
+    // Unit auto spawn params
+    public static inline final CHICKEN_SPAWN_RATE = 0.8; // Chickens per second
+    public static inline final CHICKEN_SPAWN_RADIUS = 30.0; // Distance from origin where chickens spawn
+    public static inline final CHICKEN_SPAWN_RADIUS_MIN = 9.0; // Distance from origin where chickens spawn
+    public static inline final CHICKEN_SCALE = 0.3; // Distance from origin where chickens spawn
 
     // Physics groups and masks 
     public static inline final AllGroup : UInt16 = -1;

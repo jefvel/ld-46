@@ -55,10 +55,6 @@ class Entity extends h3d.scene.Object {
             z = 0;
             vx *= friction * 0.3;
             vy *= friction * 0.3;
-        } 
-
-        if (this.z > 1.0) {
-            //vz += gravitation;
         }
 
         vz += gravitation;
