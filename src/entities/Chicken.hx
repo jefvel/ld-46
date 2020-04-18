@@ -5,18 +5,19 @@ import h3d.Vector;
 enum Behaviour {
     Idle;
     Roam;
-    Flee;
+    Follow;
     None;
 
 }
 
 class Chicken extends Entity {
     var sprite : kek.graphics.AnimatedSprite;
-
-    // Behaviour
+    
     var curBehaviour = Behaviour.None;
+    
     var idleTimer : Float;
     var idleTimerMax = 5;
+    
     var roamSpeed = 0.1;
     var roamRadiusMin = 5.0;
     var roamRadius = 20.0;
@@ -25,24 +26,37 @@ class Chicken extends Entity {
     var roamTargetRadius = 1.0;
     var roamLimit = 100.0;
 
-    public function new(?parent) {
+    var chomp : Entity;
+    var followRadius = 3.5;
+    var followSpeed: Float;
+    var finishRadius = 3.0;
+
+    public function new(?parent, c:Chomp) {
         super(parent);
 
         sprite = hxd.Res.img.chicken_tilesheet.toAnimatedSprite();
         sprite.originX = 64;
         sprite.originY = 128;
         this.maxSpeed = roamSpeed;
+        this.followSpeed = c.moveSpeed;
         this.curBehaviour = Behaviour.Idle;
         sprite.play("Idle");
         idleTimer = Math.random() * this.idleTimerMax;
+        chomp = c;
         this.addChild(sprite);
     }
 
     override function update(dt:Float) {
         super.update(dt);
 
-        if (Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2)) > this.roamLimit) {
+        if (this.x*this.x + this.y*this.y > this.roamLimit*this.roamLimit) {
             this.remove();
+        }
+
+        if (this.curBehaviour != Behaviour.Follow
+            && Math.pow(this.x - this.chomp.x, 2) + Math.pow(this.y - this.chomp.y, 2) < this.followRadius*this.followRadius) {
+            sprite.play("Walk");
+            this.curBehaviour = Behaviour.Follow;
         }
 
         switch (this.curBehaviour) {
@@ -64,7 +78,11 @@ class Chicken extends Entity {
                     this.vy = 0.0;
                     sprite.play("Idle");
                 }
-            case Flee:
+            case Follow:
+                moveToChomp();
+                if (this.x*this.x + this.y*this.y < this.finishRadius*this.finishRadius) {
+                    this.becomeFood();
+                }
         }
     }
 
@@ -95,5 +113,16 @@ class Chicken extends Entity {
         this.vy += this.roamSpeed * dPos.y;
 
         return false;
+    }
+    
+    function moveToChomp() {
+        var dPos = new Vector(this.chomp.x - this.x, this.chomp.y - this.y);
+        dPos.normalize();
+        this.vx += this.roamSpeed * dPos.x;
+        this.vy += this.roamSpeed * dPos.y;
+    }
+    
+    function becomeFood() {
+        this.remove();
     }
 }

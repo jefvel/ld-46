@@ -234,7 +234,7 @@ class PlayState extends kek.GameState {
   private function spawnChicken(dt:Float) {
     chickenSpawn += Const.CHICKEN_SPAWN_RATE * dt;
     if (chickenSpawn > 1.0) {
-      var chicken = new entities.Chicken();
+      var chicken = new entities.Chicken(null, this.chomp);
       var shadow = new Shadow(chicken, 1.0);
 
       // Set chicken position

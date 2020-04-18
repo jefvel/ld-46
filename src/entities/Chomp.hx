@@ -31,7 +31,7 @@ class Chomp extends Entity {
     var moveToX = 0.;
     var moveToY = 0.;
 
-    var moveSpeed = 0.5;
+    public var moveSpeed = 0.5;
 
     public function moveTo(x, y) {
         movingTo = true;
