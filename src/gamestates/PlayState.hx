@@ -42,11 +42,17 @@ class PlayState extends kek.GameState {
         var sphere = new bullet.Body(bullet.Shape.createSphere(0.7), 1, game.world);
         sphere.setAngularFactor(0, 0, 0);
         */
-        var chomp = new entities.Chomp();
+        // var chomp = new entities.Chomp();
 
-        game.addEntity(chomp);
-        var shadow = new Shadow(chomp, 1.9);
-        game.s3d.addChild(shadow);
+        // game.addEntity(chomp);
+        // var shadow = new Shadow(chomp, 1.9);
+        // game.s3d.addChild(shadow);
+        
+        var chicken = new entities.Chicken();
+
+        game.addEntity(chicken);
+        var shadow = new Shadow(chicken, 1.9);
+        game.s3d.addChild(chicken);
 
         // Day
         //game.s3d.lightSystem.ambientLight.set(0.93, 0.93, 1.0);
@@ -79,7 +85,7 @@ class PlayState extends kek.GameState {
         this.game.s3d.camera.zNear = 0.8; 
         this.game.s3d.camera.zFar = 120.0;
 
-        game.s3d.camera.pos.set(0, 20, 12);
+        game.s3d.camera.pos.set(0, 80, 48);
         game.s3d.camera.target.set(0, 0, 0);
 
         /*
