@@ -31,7 +31,9 @@ class Entity extends h3d.scene.Object {
 
         if (this.z < 0) {
             vz *= -0.8;
-            z *= 0;
+            z = 0;
+            vx *= friction * 0.3;
+            vy *= friction * 0.3;
         } 
 
         if (this.z > 1.0) {
@@ -46,5 +48,6 @@ class Entity extends h3d.scene.Object {
             this.vx = v.x;
             this.vy = v.y;
         }
+        vz += gravitation;
     }
 }
