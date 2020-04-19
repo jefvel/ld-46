@@ -27,7 +27,7 @@ class FoodPile extends h3d.scene.Object {
     public function new(?parent, s:Shadow, addS:Shadow->Void, remS:Shadow->Void) {
         super(parent);
         foodItems = [];
-        x -= 0.8;
+        x -= 0.65;
 
         shadow = s;
         addShadow = addS;
