@@ -6,9 +6,12 @@ class Imp extends Entity {
 
     var playState : gamestates.PlayState;
 
-    public function new(?parent, chomp, state) {
-        super(parent);
+    var disciplined = false;
+
+    public function new(?parent, chomp, state, disciplined = false) {
         playState = state;
+        this.disciplined = disciplined;
+        super(parent);
         sprite = hxd.Res.img.imp_tilesheet.toAnimatedSprite();
         this.addChild(sprite);
         sprite.originX = 32;
@@ -21,6 +24,7 @@ class Imp extends Entity {
 
         runAwayX = Math.random() * 300 - 150;
         runAwayY = 100 + Math.random() * 200;
+
     }
 
     var shadow : Shadow;
@@ -28,8 +32,9 @@ class Imp extends Entity {
         super.onAdd();
         shadow = new Shadow(this, 1.2);
         this.parent.addChild(shadow);
+        if (playState == null) trace("What");
+        else
         playState.enemies.push(this);
-
     }
 
     override function onRemove() {
@@ -44,21 +49,39 @@ class Imp extends Entity {
             return;
         }
         chaseQueueIndex = ++chomp.chaserCount;
+
+        chomp.injure();
+
         hanging = true;
     }
 
     function stealFood() {
-        if (!hanging) {
+        if (!hanging && !disciplined) {
             return;
         }
 
-        chomp.chaserCount--;
+        if (hanging) {
+            chomp.chaserCount--;
+        }
+
         hanging = false;
         stealing = true;
     }
 
+    function runAwayWithFood() {
+        var item = this.playState.foodPile.popFoodItem();
+        if (item != null) {
+            this.addChild(item);
+            item.setRotation(0, 0, 0);
+            item.x = 0.0;
+            item.y = 0.01;
+            item.z = 2.0;
+        }
+    }
+
     public var hanging = false;
-    var stealing = false;
+    public var stealing = false;
+    public var invisible = false;
 
     var stealTimer = 1.0 + Math.random();
     var runAwayX = 0.;
@@ -75,8 +98,26 @@ class Imp extends Entity {
         var targetX = x;
         var targetY = y;
 
-        var impChaseDist = 20;
+        var impChaseDist = 35;
         var impCatchDist = 1.8;
+
+        if (disciplined && !stealing) {
+            maxSpeed = 0.05;
+            targetX = x;
+            targetY = -3.9;
+            if (y >= -4) {
+                invisible = true;
+                targetX = playState.foodPile.x;
+                targetY = playState.foodPile.y;
+                var dx = targetX - x;
+                var dy = targetY - y;
+                if (dx * dx + dy * dy < 0.4 * 0.4) {
+                    stealFood();
+                }
+            }
+        } else {
+            maxSpeed = 0.04;
+        }
 
         if (chomp.returning) {
             var dx = chomp.x - x;
@@ -108,16 +149,19 @@ class Imp extends Entity {
         }
 
         if (stealing && !runningAway) {
-            targetX = targetY = 0;
+            targetX = playState.foodPile.x;
+            targetY = playState.foodPile.y;
             if (stealTimer >= 0) {
                 stealTimer -= dt;
             } else {
                 maxSpeed = 0.1;
                 runningAway = true;
+                runAwayWithFood();
             }
         }
 
         if (runningAway) {
+            maxSpeed = 0.04;
             targetX = runAwayX;
             targetY = runAwayY;
         }

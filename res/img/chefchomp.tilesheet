@@ -19,7 +19,7 @@
    },
    {
     "filename": "chefchomp 2.aseprite",
-    "frame": { "x": 0, "y": 65, "w": 64, "h": 64 },
+    "frame": { "x": 130, "y": 0, "w": 64, "h": 64 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
@@ -28,6 +28,15 @@
    },
    {
     "filename": "chefchomp 3.aseprite",
+    "frame": { "x": 0, "y": 65, "w": 64, "h": 64 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
+    "duration": 400
+   },
+   {
+    "filename": "chefchomp 4.aseprite",
     "frame": { "x": 65, "y": 65, "w": 64, "h": 64 },
     "rotated": false,
     "trimmed": false,
@@ -41,12 +50,13 @@
   "version": "1.2.16.3",
   "image": "chefchomp.png",
   "format": "RGBA8888",
-  "size": { "w": 129, "h": 129 },
+  "size": { "w": 194, "h": 129 },
   "scale": "1",
   "frameTags": [
    { "name": "Idle", "from": 0, "to": 1, "direction": "forward" },
    { "name": "Aim", "from": 2, "to": 2, "direction": "forward" },
-   { "name": "Dash", "from": 3, "to": 3, "direction": "forward" }
+   { "name": "Dash", "from": 3, "to": 3, "direction": "forward" },
+   { "name": "Injured", "from": 4, "to": 4, "direction": "forward" }
   ]
  }
 }

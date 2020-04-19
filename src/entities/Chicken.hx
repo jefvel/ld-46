@@ -1,5 +1,6 @@
 package entities;
 
+import gamestates.PlayState;
 import kek.graphics.AnimatedSprite;
 import h3d.Vector;
 
@@ -7,6 +8,7 @@ enum Behaviour {
     Idle;
     Roam;
     Follow;
+    GoToPile;
     Food;
     None;
 }
@@ -35,8 +37,11 @@ class Chicken extends Entity {
     var foodpileThreshold = 0.2;
     var finishRadius = 3.0;
 
-    public function new(?parent, c:Chomp, f:FoodPile) {
+    var playState: PlayState;
+
+    public function new(?parent, c:Chomp, f:FoodPile, state) {
         super(parent);
+        this.playState = state;
 
         sprite = hxd.Res.img.chicken_tilesheet.toAnimatedSprite();
         sprite.originX = 64;
@@ -49,6 +54,20 @@ class Chicken extends Entity {
         chomp = c;
         foodpile = f;
         this.addChild(sprite);
+    }
+
+    var shadow : Shadow;
+    override function onAdd() {
+        super.onAdd();
+        shadow = new Shadow(this, 1.1);
+        this.parent.addChild(shadow);
+        playState.chickens.push(this);
+    }
+
+    override function onRemove() {
+        super.onRemove();
+        shadow.remove();
+        playState.chickens.remove(this);
     }
 
     override function update(dt:Float) {
@@ -86,16 +105,27 @@ class Chicken extends Entity {
                         sprite.play("Idle");
                     }
                 case Follow:
+                    if (chomp.readyToLaunch()) {
+                        this.curBehaviour = Behaviour.GoToPile;
+                    }
+
                     moveToChomp();
                     if (this.x*this.x + this.y*this.y < this.finishRadius*this.finishRadius) {
                         this.becomeFood();
                     }
+                case GoToPile:
+                    moveToPile();
                 case Food:
                     if (this.vz < foodpileThreshold) {
-                        this.foodpile.pushFoodItem(this.sprite);
                         this.remove();
                     }
             }
+        }
+
+        if (this.vx < 0) {
+            this.sprite.flipX = true;
+        } else if (this.vx > 0) {
+            this.sprite.flipX = false;
         }
     }
 
@@ -105,13 +135,13 @@ class Chicken extends Entity {
         var roamY = Math.sin(roamAngle);
 
         var roamDistance = Math.max(Math.random() * this.roamRadius, this.roamRadiusMin);
-        
-        this.roamTargetX = this.x + roamX * roamDistance;
-        this.roamTargetY = this.y + roamY * roamDistance;
+        roamX *= roamDistance;
+        roamX *= roamDistance;
 
-        if (this.roamTargetX < this.x) {
-            this.sprite.flipX = true;
-        }
+        roamY = Math.max(0.1, roamY);
+        
+        this.roamTargetX = this.x + roamX;
+        this.roamTargetY = this.y + roamY;
     }
     
     function moveToRoamTarget(): Bool {
@@ -134,14 +164,27 @@ class Chicken extends Entity {
         this.vx += this.roamSpeed * dPos.x;
         this.vy += this.roamSpeed * dPos.y;
     }
+
+    function moveToPile() {
+        var dPos = new Vector(playState.foodPile.x - this.x, playState.foodPile.y - this.y);
+        var destLengthSq = dPos.lengthSq();
+        dPos.normalize();
+        this.vx += this.roamSpeed * dPos.x;
+        this.vy += this.roamSpeed * dPos.y;
+
+        if (destLengthSq < this.finishRadius*this.finishRadius) {
+            this.becomeFood();
+        }
+    }
+
     
     function becomeFood() {
         this.curBehaviour = Food;
-        this.removeChild(sprite);
-        sprite = hxd.Res.img.chickenbone_tilesheet.toAnimatedSprite();
-        sprite.originX = 16;
-        sprite.originY = 32;
-        this.launchChickenBone();
+
+        var foodItem = new entities.FoodItem("ChickenBone");
+        this.foodpile.pushFoodItem(foodItem);
+        
+        // this.launchChickenBone();
     }
 
     function launchChickenBone() {

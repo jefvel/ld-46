@@ -26,8 +26,10 @@ class PlayState extends kek.GameState {
   var chomp: entities.Chomp;
 
   var pole: kek.graphics.AnimatedSprite;
+
+  var king : entities.King;
   
-  var foodPile: FoodPile;
+  public var foodPile: FoodPile;
 
   var camBaseY = 40.;
 
@@ -35,12 +37,15 @@ class PlayState extends kek.GameState {
   var camPos = new h3d.Vector();
   
   var chickenBones : Array<kek.graphics.AnimatedSprite>;
-  public var enemies : Array<Entity>;
+
+  public var enemies : Array<entities.Imp>;
+  public var chickens: Array<Entity>;
 
   var arrow : Arrow;
 
   public override function onEnter() {
     enemies = [];
+    chickens = [];
     var meshSize = Const.WORLD_WIDTH / 4;
     groundmesh = new h3d.prim.Cube(meshSize, meshSize, 0.99, true);
     groundmesh.unindex();
@@ -90,6 +95,10 @@ class PlayState extends kek.GameState {
       function (s: Shadow) { game.s3d.removeChild(s); }
     );
     game.s3d.addChild(foodPile);
+    foodPile.x = 3;
+    foodPile.y = 3;
+
+    king = new entities.King(game.s3d, this);
 
     groundInteractor = new h3d.scene.Interactive(ground.getCollider(), game.s3d);
     groundInteractor.onMove = groundInteractor.onCheck = function(e:hxd.Event) {
@@ -110,21 +119,94 @@ class PlayState extends kek.GameState {
     camTarget.set(0, 0, 0);
 
     foodPile.camera = this.game.s3d.camera;
-    spawnEnemies();
+    for (i in 0...Const.INITIAL_ENEMY_COUNT) {
+      spawnEnemy();
+    }
+    spawnFormation();
   }
 
-  function spawnEnemies() {
-    for (i in 0...100) {
-      var imp = new entities.Imp(game.s3d, chomp, this);
-      var impMinDist = Const.WORLD_HEIGHT * 0.1;
-      var impDist = Const.WORLD_HEIGHT * 0.5;
-      var distance = Math.random() * impDist + impMinDist;
+  var formationWidth = 2;
+  var formationHeight = 2;
+  
+  var currentWave = 0;
 
-      var angle = -Math.random() * Math.PI;
+  var p1 = new h3d.Vector();
+  var p2 = new h3d.Vector();
+  var sd = new h3d.Vector();
+  function sociallyDistance() {
+    var md = 3; // Minimum distance
+    var mdSq = md * md;
+    for (e in enemies) {
+      if (e.stealing || e.hanging || e.invisible) continue;
+      p1.set(e.x, e.y, e.z);
 
-      imp.x = Math.cos(angle) * distance; //Math.random() * Const.WORLD_WIDTH - Const.WORLD_WIDTH * 0.5;
-      imp.y = Math.sin(angle) * distance; //Math.random() * Const.WORLD_HEIGHT - Const.WORLD_HEIGHT;
+      for (e2 in enemies) {
+        if (e == e2) continue;
+        if (e2.stealing || e2.hanging || e.invisible) continue;
+
+        p2.set(e2.x, e2.y, e2.z);
+
+        var dSq = p2.distanceSq(p1);
+        if (dSq < mdSq) {
+          var dd = md - Math.sqrt(dSq);
+          sd.set(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
+          sd.normalize();
+          sd.scale3(dd * 0.45);
+
+          e2.x += sd.x;
+          e2.y += sd.y;
+          e2.z += sd.z;
+
+          e.x -= sd.x;
+          e.y -= sd.y;
+          e.z -= sd.z;
+        }
+      }
     }
+  }
+
+  function spawnFormation() {
+    var w = formationHeight;
+    var h = formationWidth;
+    var d = 6;
+    var ox = 0 + Math.random() * 8 - 4;
+    var oy = -40;
+
+    for (x in 0...w) {
+      for (y in 0...h) {
+        if (enemies.length > Const.MAX_ENEMIES) break;
+        var imp = createEnemyAt(
+          d * (x - (w * 0.5)) + ox,
+          d * (y - (h * 0.5)) + oy,
+          true);
+      }
+    }
+
+    currentWave ++;
+    if (currentWave % 3 == 0) {
+      formationWidth ++;
+    }
+    if (currentWave % 4 == 0) {
+      formationHeight ++;
+    }
+  }
+
+  function createEnemyAt(x, y, disciplined = false) {
+    var imp = new entities.Imp(game.s3d, chomp, this, disciplined);
+
+    imp.x = x; //Math.random() * Const.WORLD_WIDTH - Const.WORLD_WIDTH * 0.5;
+    imp.y = y; //Math.random() * Const.WORLD_HEIGHT - Const.WORLD_HEIGHT;
+    imp.z = 1.0 + Math.random() * 2.3;
+    return imp;
+  }
+
+  function spawnEnemy() {
+    var impMinDist = Const.WORLD_HEIGHT * 0.1;
+    var impDist = Const.WORLD_HEIGHT * 0.5;
+    var distance = Math.random() * impDist + impMinDist;
+
+    var angle = -Math.random() * Math.PI;
+    createEnemyAt(Math.cos(angle) * distance, Math.sin(angle) * distance);
   }
   
   override function onEvent(e:Event) {
@@ -183,6 +265,8 @@ class PlayState extends kek.GameState {
   
   public override function update(dt: Float) {
     this.spawnChicken(dt);
+    this.spawnEnemies(dt);
+    this.checkNewWave(dt);
 
     if (chomp.dragging) {
       var cy = Math.max(0.1, cursorPos.y);
@@ -210,6 +294,8 @@ class PlayState extends kek.GameState {
       chomp.y = dy;
       chomp.vx = chomp.vy = 0;
     }
+
+    sociallyDistance();
   }
 
   public override function onRender(e:Engine) {
@@ -240,24 +326,47 @@ class PlayState extends kek.GameState {
     cam.target.z += (camTarget.z - cam.target.z) * 0.3;
   }
 
+  var timeSinceLastWave = .0;
+  private function checkNewWave(dt: Float) {
+    timeSinceLastWave += dt;
+    if (timeSinceLastWave > Const.WAVE_SPAWN_TIME) {
+      timeSinceLastWave -= Const.WAVE_SPAWN_TIME;
+      spawnFormation();
+    }
+  }
+
+  var enemySpawn = 0.0;
+  private function spawnEnemies(dt : Float) {
+    enemySpawn += Const.ENEMY_SPAWN_RATE * dt;
+    if (enemySpawn > 1.0) {
+      enemySpawn -= 1.0;
+      if (enemies.length >= Const.MAX_ENEMIES) {
+        return;
+      }
+      spawnEnemy();
+    }
+  }
+
   var chickenSpawn = 0.0;
   private function spawnChicken(dt:Float) {
     chickenSpawn += Const.CHICKEN_SPAWN_RATE * dt;
     if (chickenSpawn > 1.0) {
-      var chicken = new entities.Chicken(null, this.chomp, this.foodPile);
-      var shadow = new Shadow(chicken, 1.0);
+      chickenSpawn -= 1.0;
+
+      if (chickens.length >= Const.MAX_CHICKENS) {
+        return;
+      }
+
+      var chicken = new entities.Chicken(null, this.chomp, this.foodPile, this);
 
       // Set chicken position
-      var spawnAngle = (Math.random() - 0.5) * 0.5 * Math.PI - 0.5 * Math.PI;
+      var spawnAngle = -Math.random() * Math.PI;
       chicken.x = Math.cos(spawnAngle) * (Math.random() * Const.CHICKEN_SPAWN_RADIUS + Const.CHICKEN_SPAWN_RADIUS_MIN);
       chicken.y = Math.sin(spawnAngle) * (Math.random() * Const.CHICKEN_SPAWN_RADIUS + Const.CHICKEN_SPAWN_RADIUS_MIN);
       chicken.scale(Const.CHICKEN_SCALE);
       chicken.z = 2.7;
       
       game.s3d.addChild(chicken);
-      game.s3d.addChild(shadow);
-
-      chickenSpawn -= 1.0;
     }
   }
 }

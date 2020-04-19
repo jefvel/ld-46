@@ -22,7 +22,17 @@ class FoodPile extends h3d.scene.Object {
     var pileLevelItemsLimitStep = 5;
     var pileLevelItemsLimitMin = 5;
 
-    private var foodItems : Array<kek.graphics.AnimatedSprite>;
+    public function getPileHeight() {
+        var highest = 0.0;
+        for (i in foodItems) {
+            if (i.z > highest) {
+                highest = i.z;
+            }
+        }
+        return highest;
+    }
+
+    private var foodItems : Array<FoodItem>;
 
     public function new(?parent, s:Shadow, addS:Shadow->Void, remS:Shadow->Void) {
         super(parent);
@@ -34,13 +44,13 @@ class FoodPile extends h3d.scene.Object {
         removeShadow = remS;
     }
     
-    public function pushFoodItem(item: kek.graphics.AnimatedSprite) {
+    public function pushFoodItem(item: FoodItem) {
         item.z = pileTop + Math.random() * pileTopError;
         item.x = (Math.random() - 0.5) * 2.0 * pileRadius;
-        item.x = (Math.random() - 0.5) * 2.0 * pileRadius;
-        item.y = pileDepth + 0.00001;
+        item.y = pileDepth + 0.00001 -foodItems.length * 0.001;
         var camFor = camera.pos.sub(camera.target);
-        item.setRotationAxis(camFor.x, camFor.y, camFor.z, (Math.random() * 0.5 + 0.5) * Math.PI);
+        item.rotate(0, Math.random() * Math.PI * 2, 0.0);
+        //item.setRotationAxis(camFor.x, camFor.y, camFor.z, (Math.random() * 0.5 + 0.5) * Math.PI);
         foodItems.push(item);
         this.addChild(item);
 
@@ -69,7 +79,11 @@ class FoodPile extends h3d.scene.Object {
         pileLevelItems = 0;
     }
     
-    public function popFoodItem(): kek.graphics.AnimatedSprite {
+    public function popFoodItem(): FoodItem {
+        if (foodItems.length == 0) {
+            return null;
+        }
+
         var item = foodItems.pop();
         this.removeChild(item);
         pileLevelItems--;

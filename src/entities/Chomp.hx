@@ -20,7 +20,10 @@ class Chomp extends Entity {
         this.maxSpeed = 0.24;
         this.vy = 0.05;
         this.z = 0.9;
+        defaultFriction = this.friction;
     }
+
+    var defaultFriction = 0.98;
 
     public var dragging = false;
     public var currentlyLaunched = false;
@@ -48,6 +51,7 @@ class Chomp extends Entity {
 
     var dashing = false;
     var dashTime = 0.0;
+    var maxDashTime = 0.3;
 
 
     function hitClosebyEnemies() {
@@ -86,26 +90,54 @@ class Chomp extends Entity {
                 dx /= closestDist;
                 dy /= closestDist;
 
-                vx = -dx * 1.2;
-                vy = -dy * 2.5;
+                vx = -dx * 1.1;
+                vy = -dy * 1.5;
 
-                vz = 0.2;
+                vz = 0.02;
 
                 dashTime += 0.06;
+                dashTime = Math.min(dashTime, maxDashTime);
 
                 // todo Add the monster meat to baggagae
                 closestEnemy.remove();
+                var impHead = new FoodItem("DeadImp");
+                baggage.push(impHead);
             }
         }
     }
 
+    var baggage = [];
+
+    var injured = false;
+    var maxInjureTime = 0.4;
+    var injureTime = 0.;
+    public function injure() {
+        if (injured) {
+            return;
+        }
+
+        injured = true;
+        injureTime = maxInjureTime;
+    }
+
     public function dash() {
-        if (dashing) {
+        if (dashing || injured) {
             return;
         }
 
         dashing = true;
         dashTime = 0.1;
+    }
+
+    public function readyToLaunch() {
+        return !this.returning && !this.currentlyLaunched;
+    }
+
+    function emptyBaggage() {
+        while(baggage.length > 0) {
+            var item = baggage.pop();
+            playState.foodPile.pushFoodItem(item);
+        }
     }
 
     override function update(dt:Float) {
@@ -119,18 +151,31 @@ class Chomp extends Entity {
             }
         }
 
+        if (injured) {
+            injureTime -= dt;
+            if (injureTime <= 0) {
+                injureTime = 0;
+                injured = false;
+            }
+        }
+
         if (dashing) {
+            this.friction = 0.99;
             dashTime -= dt;
             if (dashTime <= 0) {
                 dashing = false;
             }
+        } else {
+            friction = defaultFriction;
         }
 
         super.update(dt);
 
         var v = Math.sqrt(vx * vx + vy * vy + vz * vz);
 
-        if (dashing) {
+        if (injured) {
+            sprite.play("Injured");
+        } else if (dashing) {
             sprite.play("Dash");
         } else if (dragging) {
             sprite.play("Aim");
@@ -155,11 +200,12 @@ class Chomp extends Entity {
             }
         }
 
-        if (movingTo && z < 0.1) {
+        if (!dashing && movingTo && z < 0.1) {
             var v = new Vector(moveToX - x, moveToY - y);
-            if (v.length() < 0.5) {
+            if (v.length() < 0.85) {
                 movingTo = false;
                 returning = false;
+                emptyBaggage();
             }
 
             v.normalize();

@@ -19,9 +19,16 @@ class Const {
 
     // Unit auto spawn params
     public static inline final CHICKEN_SPAWN_RATE = 5; // Chickens per second
-    public static inline final CHICKEN_SPAWN_RADIUS = 10.0; // Distance from origin where chickens spawn
-    public static inline final CHICKEN_SPAWN_RADIUS_MIN = 5; // Distance from origin where chickens spawn
+    public static inline final CHICKEN_SPAWN_RADIUS = 150.0; // Distance from origin where chickens spawn
+    public static inline final CHICKEN_SPAWN_RADIUS_MIN = 15; // Distance from origin where chickens spawn
     public static inline final CHICKEN_SCALE = 0.3; // Distance from origin where chickens spawn
+    public static inline final MAX_CHICKENS = 100; // Max chickens allowed to roam around
+
+    public static inline final INITIAL_ENEMY_COUNT = 30;
+    public static inline final MAX_ENEMIES = 400;
+    public static inline final ENEMY_SPAWN_RATE = 1;
+
+    public static inline final WAVE_SPAWN_TIME = 10.0; // Seconds between waves
 
     // Physics groups and masks 
     public static inline final AllGroup : UInt16 = -1;
