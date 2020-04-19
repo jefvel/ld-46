@@ -31,7 +31,7 @@ class PlayState extends kek.GameState {
   var camTarget = new h3d.Vector();
   var camPos = new h3d.Vector();
 
-  var enemies : Array<Entity>;
+  public var enemies : Array<Entity>;
 
   var arrow : Arrow;
 
@@ -68,7 +68,7 @@ class PlayState extends kek.GameState {
     sphere.setAngularFactor(0, 0, 0);
     */
 
-    chomp = new entities.Chomp();
+    chomp = new entities.Chomp(null, this);
     var shadow = new Shadow(chomp, 1.9);
     game.s3d.addChild(chomp);
     game.s3d.addChild(shadow);
@@ -102,7 +102,7 @@ class PlayState extends kek.GameState {
 
   function spawnEnemies() {
     for (i in 0...100) {
-      var imp = new entities.Imp(game.s3d, chomp);
+      var imp = new entities.Imp(game.s3d, chomp, this);
       var impMinDist = Const.WORLD_HEIGHT * 0.1;
       var impDist = Const.WORLD_HEIGHT * 0.5;
       var distance = Math.random() * impDist + impMinDist;
@@ -111,7 +111,6 @@ class PlayState extends kek.GameState {
 
       imp.x = Math.cos(angle) * distance; //Math.random() * Const.WORLD_WIDTH - Const.WORLD_WIDTH * 0.5;
       imp.y = Math.sin(angle) * distance; //Math.random() * Const.WORLD_HEIGHT - Const.WORLD_HEIGHT;
-      enemies.push(imp);
     }
   }
   
@@ -126,6 +125,10 @@ class PlayState extends kek.GameState {
         if (dx * dx + dy * dy < catchDist * catchDist) {
           chomp.startDragging();
         }
+      }
+
+      if (chomp.returning) {
+        chomp.dash();
       }
     }
 
