@@ -1,13 +1,14 @@
 package entities;
 
+import kek.graphics.AnimatedSprite;
 import h3d.Vector;
 
 enum Behaviour {
     Idle;
     Roam;
     Follow;
+    Food;
     None;
-
 }
 
 class Chicken extends Entity {
@@ -26,12 +27,15 @@ class Chicken extends Entity {
     var roamTargetRadius = 1.0;
     var roamLimit = 100.0;
 
-    var chomp : Entity;
+    var chomp : Chomp;
     var followRadius = 3.5;
     var followSpeed: Float;
+
+    var foodpile:  FoodPile;
+    var foodpileThreshold = 0.2;
     var finishRadius = 3.0;
 
-    public function new(?parent, c:Chomp) {
+    public function new(?parent, c:Chomp, f:FoodPile) {
         super(parent);
 
         sprite = hxd.Res.img.chicken_tilesheet.toAnimatedSprite();
@@ -43,46 +47,55 @@ class Chicken extends Entity {
         sprite.play("Idle");
         idleTimer = Math.random() * this.idleTimerMax;
         chomp = c;
+        foodpile = f;
         this.addChild(sprite);
     }
 
     override function update(dt:Float) {
         super.update(dt);
 
-        if (this.x*this.x + this.y*this.y > this.roamLimit*this.roamLimit) {
-            this.remove();
-        }
+        if (this.curBehaviour != None) {
+            if (this.x*this.x + this.y*this.y > this.roamLimit*this.roamLimit) {
+                this.remove();
+            }
+    
+            if (this.curBehaviour != Behaviour.Follow && chomp.returning &&
+                Math.pow(this.x - this.chomp.x, 2) + Math.pow(this.y - this.chomp.y, 2) < this.followRadius*this.followRadius
+            ) {
+                sprite.play("Walk");
+                this.curBehaviour = Behaviour.Follow;
+            }
 
-        if (this.curBehaviour != Behaviour.Follow
-            && Math.pow(this.x - this.chomp.x, 2) + Math.pow(this.y - this.chomp.y, 2) < this.followRadius*this.followRadius) {
-            sprite.play("Walk");
-            this.curBehaviour = Behaviour.Follow;
-        }
-
-        switch (this.curBehaviour) {
-            case None:
-                return;
-            case Idle:
-                idleTimer -= dt;
-                if (idleTimer <= 0.0) {
-                    this.pickRoamTarget();
-                    this.curBehaviour = Behaviour.Roam;
-                    sprite.play("Walk");
-                }
-            case Roam:
-                var arrived = this.moveToRoamTarget();
-                if (arrived) {
-                    idleTimer = Math.random() * this.idleTimerMax;
-                    this.curBehaviour = Behaviour.Idle;
-                    this.vx = 0.0;
-                    this.vy = 0.0;
-                    sprite.play("Idle");
-                }
-            case Follow:
-                moveToChomp();
-                if (this.x*this.x + this.y*this.y < this.finishRadius*this.finishRadius) {
-                    this.becomeFood();
-                }
+            switch (this.curBehaviour) {
+                case None:
+                    return;
+                case Idle:
+                    idleTimer -= dt;
+                    if (idleTimer <= 0.0) {
+                        this.pickRoamTarget();
+                        this.curBehaviour = Behaviour.Roam;
+                        sprite.play("Walk");
+                    }
+                case Roam:
+                    var arrived = this.moveToRoamTarget();
+                    if (arrived) {
+                        idleTimer = Math.random() * this.idleTimerMax;
+                        this.curBehaviour = Behaviour.Idle;
+                        this.vx = 0.0;
+                        this.vy = 0.0;
+                        sprite.play("Idle");
+                    }
+                case Follow:
+                    moveToChomp();
+                    if (this.x*this.x + this.y*this.y < this.finishRadius*this.finishRadius) {
+                        this.becomeFood();
+                    }
+                case Food:
+                    if (this.vz < foodpileThreshold) {
+                        this.foodpile.pushFoodItem(this.sprite);
+                        this.remove();
+                    }
+            }
         }
     }
 
@@ -123,6 +136,21 @@ class Chicken extends Entity {
     }
     
     function becomeFood() {
-        this.remove();
+        this.curBehaviour = Food;
+        this.removeChild(sprite);
+        sprite = hxd.Res.img.chickenbone_tilesheet.toAnimatedSprite();
+        sprite.originX = 16;
+        sprite.originY = 32;
+        this.launchChickenBone();
+    }
+
+    function launchChickenBone() {
+        sprite.z = 0.01;
+        var launchPower = 0.4;
+
+        this.vx = -this.x * launchPower;
+        this.vy = -this.y * launchPower;
+
+        this.vz = launchPower * 2.3;
     }
 }

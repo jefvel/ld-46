@@ -1,5 +1,6 @@
 package gamestates;
 
+import entities.FoodPile;
 import hxd.Event;
 import h3d.mat.Defaults;
 import h3d.mat.Material;
@@ -25,6 +26,8 @@ class PlayState extends kek.GameState {
   var chomp: entities.Chomp;
 
   var pole: kek.graphics.AnimatedSprite;
+  
+  var foodPile: FoodPile;
 
   var camBaseY = 40.;
 
@@ -32,6 +35,8 @@ class PlayState extends kek.GameState {
   var camPos = new h3d.Vector();
 
   var enemies : Array<Entity>;
+  
+  var chickenBones : Array<kek.graphics.AnimatedSprite>;
 
   var arrow : Arrow;
 
@@ -80,6 +85,13 @@ class PlayState extends kek.GameState {
     var poleShadow = new Shadow(pole, 1.3);
     game.s3d.addChild(poleShadow);
 
+    foodPile = new entities.FoodPile(null,
+      new Shadow(foodPile, 5.2),
+      function (s: Shadow) { game.s3d.addChild(s); },
+      function (s: Shadow) { game.s3d.removeChild(s); }
+    );
+    game.s3d.addChild(foodPile);
+
     groundInteractor = new h3d.scene.Interactive(ground.getCollider(), game.s3d);
     groundInteractor.onMove = groundInteractor.onCheck = function(e:hxd.Event) {
       cursorPos.set(e.relX, e.relY, e.relZ);
@@ -97,6 +109,8 @@ class PlayState extends kek.GameState {
 
     camPos.set(0, camBaseY, 17);
     camTarget.set(0, 0, 0);
+
+    foodPile.camera = this.game.s3d.camera;
     spawnEnemies();
   }
 
@@ -228,11 +242,11 @@ class PlayState extends kek.GameState {
   private function spawnChicken(dt:Float) {
     chickenSpawn += Const.CHICKEN_SPAWN_RATE * dt;
     if (chickenSpawn > 1.0) {
-      var chicken = new entities.Chicken(null, this.chomp);
+      var chicken = new entities.Chicken(null, this.chomp, this.foodPile);
       var shadow = new Shadow(chicken, 1.0);
 
       // Set chicken position
-      var spawnAngle = Math.random() * 2.0 * Math.PI;
+      var spawnAngle = (Math.random() - 0.5) * 0.5 * Math.PI - 0.5 * Math.PI;
       chicken.x = Math.cos(spawnAngle) * (Math.random() * Const.CHICKEN_SPAWN_RADIUS + Const.CHICKEN_SPAWN_RADIUS_MIN);
       chicken.y = Math.sin(spawnAngle) * (Math.random() * Const.CHICKEN_SPAWN_RADIUS + Const.CHICKEN_SPAWN_RADIUS_MIN);
       chicken.scale(Const.CHICKEN_SCALE);
