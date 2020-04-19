@@ -57,7 +57,7 @@ class Imp extends Entity {
         stealing = true;
     }
 
-    var hanging = false;
+    public var hanging = false;
     var stealing = false;
 
     var stealTimer = 1.0 + Math.random();

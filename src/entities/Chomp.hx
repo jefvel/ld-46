@@ -54,6 +54,10 @@ class Chomp extends Entity {
         var closestDist = Math.POSITIVE_INFINITY;
         var closestEnemy = null;
         for (e in playState.enemies) {
+            var enemy = cast(e, entities.Imp);
+            if (enemy.hanging) {
+                continue;
+            }
             var dx = e.x - this.x;
             var dy = e.y - this.y;
 
@@ -87,7 +91,7 @@ class Chomp extends Entity {
 
                 vz = 0.2;
 
-                dashTime += 0.1;
+                dashTime += 0.06;
 
                 // todo Add the monster meat to baggagae
                 closestEnemy.remove();
