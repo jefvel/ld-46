@@ -69,13 +69,22 @@ class Imp extends Entity {
     }
 
     function runAwayWithFood() {
-        var item = this.playState.foodPile.popFoodItem();
-        if (item != null) {
-            this.addChild(item);
-            item.setRotation(0, 0, 0);
-            item.x = 0.0;
-            item.y = 0.01;
-            item.z = 2.0;
+        var stealAmount = 1;
+        var itemAmount = this.playState.foodPile.itemCount();
+
+        if (itemAmount > 8) {
+            stealAmount = Math.floor(itemAmount / 4);
+        }
+
+        for (i in 0...stealAmount) {
+            var item = this.playState.foodPile.popFoodItem();
+            if (item != null) {
+                this.addChild(item);
+                item.setRotation(0, Math.random() * 0.2 - 0.1, 0);
+                item.x = 0.0 + Math.sin(i * Math.PI * 0.43) * 0.13;
+                item.y = 0.01 + i * 0.01;
+                item.z = 2.0 + i * 0.3;
+            }
         }
     }
 
@@ -119,7 +128,7 @@ class Imp extends Entity {
             maxSpeed = 0.04;
         }
 
-        if (chomp.returning) {
+        if (chomp.returning && this.z < 2) {
             var dx = chomp.x - x;
             var dy = chomp.y - y;
 

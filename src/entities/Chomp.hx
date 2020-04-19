@@ -5,8 +5,27 @@ import h3d.Vector;
 class Chomp extends Entity {
     var sprite : kek.graphics.AnimatedSprite;
     var playState : gamestates.PlayState;
+    var bounceSounds : Array<hxd.res.Sound>;
+    var bagX = 0.9;
+    var bagZ = 1.3;
     public function new(?parent, state) {
         super(parent);
+
+        bag = hxd.Res.img.bag_tilesheet.toAnimatedSprite();
+        bag.originX = bag.originY = 32;
+
+        this.addChild(bag);
+        bag.x = bagX;
+        bag.y = -0.05;
+        bag.z = bagZ;
+
+        bounceSounds = [
+            hxd.Res.sound.bounce0,
+            hxd.Res.sound.bounce1,
+            hxd.Res.sound.bounce2,
+            hxd.Res.sound.bounce3,
+            hxd.Res.sound.bounce4,
+        ];
 
         sprite = hxd.Res.img.chefchomp_tilesheet.toAnimatedSprite();
         sprite.originX = 32;
@@ -90,6 +109,9 @@ class Chomp extends Entity {
                 dx /= closestDist;
                 dy /= closestDist;
 
+                var impactX = dx * 10;
+                var impactY = dy * 10;
+
                 vx = -dx * 1.1;
                 vy = -dy * 1.5;
 
@@ -104,11 +126,16 @@ class Chomp extends Entity {
                 baggage.push(impHead);
                 hxd.Res.sound.flipper.play(false, 0.3);
                 dashCombo ++;
+
+
+                // Spawn imp corpse
+                new entities.Corpse(this.parent, closestEnemy.x, closestEnemy.y, impactX, impactY);
             }
         }
     }
 
     var baggage = [];
+    var bag : kek.graphics.AnimatedSprite;
 
     var injured = false;
     var maxInjureTime = 0.4;
@@ -133,11 +160,19 @@ class Chomp extends Entity {
         dashCombo = 0;
         dashing = true;
         dashTime = 0.1;
+        hxd.Res.sound.dash.play(false, 0.4);
     }
 
     public function readyToLaunch() {
         return !this.returning && !this.currentlyLaunched;
     }
+
+    override function onBounce() {
+        if (currentlyLaunched) {
+            hxd.Res.sound.landbounce.play(false, 0.4);
+        }
+    }
+
 
     function emptyBaggage() {
         while(baggage.length > 0) {
@@ -150,6 +185,9 @@ class Chomp extends Entity {
         if (dashCooldown >= 0.0) {
             dashCooldown -= dt;
         }
+
+        bag.x = bagX + vx * 0.5;
+        bag.z = bagZ + vz * 0.5;
 
         if (currentlyLaunched) {
             maxSpeed = 10000;
@@ -190,6 +228,8 @@ class Chomp extends Entity {
 
         if (injured) {
             sprite.play("Injured");
+        } else if (dashCooldown > 0.0) {
+            sprite.play("Tired");
         } else if (dashing) {
             sprite.play("Dash");
         } else if (dragging) {
@@ -212,6 +252,8 @@ class Chomp extends Entity {
             moveTo(0, 1);
             if (z <= 0) {
                 vz = 0.2;
+                var i = Std.int(Math.random() * bounceSounds.length);
+                bounceSounds[i].play(false, 0.05);
             }
         }
 
@@ -228,6 +270,21 @@ class Chomp extends Entity {
 
             vx += v.x;
             vy += v.y;
+        }
+
+        var bagSize = baggage.length;
+        if (bagSize == 0) {
+            bag.currentFrame = 0;
+        } else if (bagSize < 3) {
+            bag.currentFrame = 1;
+        } else if (bagSize < 8) {
+            bag.currentFrame = 2;
+        } else if (bagSize < 16) {
+            bag.currentFrame = 3;
+        } else if (bagSize < 30) {
+            bag.currentFrame = 4;
+        } else if (bagSize < 50) {
+            bag.currentFrame = 5;
         }
     }
 }

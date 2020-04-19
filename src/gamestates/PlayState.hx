@@ -23,7 +23,7 @@ class PlayState extends kek.GameState {
 
   var cursorPos = new h3d.col.Point();
   
-  var chomp: entities.Chomp;
+  public var chomp: entities.Chomp;
 
   var pole: kek.graphics.AnimatedSprite;
 
@@ -64,19 +64,6 @@ class PlayState extends kek.GameState {
     arrow = new Arrow();
     game.s3d.addChild(arrow);
 
-    /*
-    var floor = new bullet.Body(bullet.Shape.createBox(100, 100, 1.0), 0, game.world);
-    floor.object = ground;
-    floor.setTransform(new Point(0, 0, -.51));
-    var shape = bullet.Shape.createBox(1,1,1);
-
-    var pole = new bullet.Body(bullet.Shape.createCylinder(Z, 0.5, 5), 0, game.world);
-    game.s3d.addChild(pole.initObject());
-
-    var sphere = new bullet.Body(bullet.Shape.createSphere(0.7), 1, game.world);
-    sphere.setAngularFactor(0, 0, 0);
-    */
-
     chomp = new entities.Chomp(null, this);
     var shadow = new Shadow(chomp, 1.9);
     game.s3d.addChild(chomp);
@@ -92,7 +79,8 @@ class PlayState extends kek.GameState {
     foodPile = new entities.FoodPile(null,
       new Shadow(foodPile, 5.2),
       function (s: Shadow) { game.s3d.addChild(s); },
-      function (s: Shadow) { game.s3d.removeChild(s); }
+      function (s: Shadow) { game.s3d.removeChild(s); },
+      this
     );
     game.s3d.addChild(foodPile);
     foodPile.x = 3;
@@ -133,6 +121,7 @@ class PlayState extends kek.GameState {
   var p1 = new h3d.Vector();
   var p2 = new h3d.Vector();
   var sd = new h3d.Vector();
+
   function sociallyDistance() {
     var md = 3; // Minimum distance
     var mdSq = md * md;
@@ -166,11 +155,11 @@ class PlayState extends kek.GameState {
   }
 
   function spawnFormation() {
-    var w = formationHeight;
-    var h = formationWidth;
+    var w = formationWidth;
+    var h = formationHeight;
     var d = 6;
-    var ox = 0 + Math.random() * 8 - 4;
-    var oy = -40;
+    var ox = 0 + Math.random() * 20 - 10;
+    var oy = -50;
 
     for (x in 0...w) {
       for (y in 0...h) {
@@ -183,10 +172,10 @@ class PlayState extends kek.GameState {
     }
 
     currentWave ++;
-    if (currentWave % 3 == 0) {
+    if (currentWave % 2 == 0) {
       formationWidth ++;
     }
-    if (currentWave % 4 == 0) {
+    if (formationHeight < 6 && currentWave % 4 == 0) {
       formationHeight ++;
     }
   }
@@ -196,7 +185,7 @@ class PlayState extends kek.GameState {
 
     imp.x = x; //Math.random() * Const.WORLD_WIDTH - Const.WORLD_WIDTH * 0.5;
     imp.y = y; //Math.random() * Const.WORLD_HEIGHT - Const.WORLD_HEIGHT;
-    imp.z = 1.0 + Math.random() * 2.3;
+    imp.z = 8.0 + Math.random() * 5.3;
     return imp;
   }
 
@@ -249,6 +238,7 @@ class PlayState extends kek.GameState {
     chomp.dragging = false;
 
     chomp.currentlyLaunched = true;
+    hxd.Res.sound.launch.play(false, 0.6);
   }
 
 

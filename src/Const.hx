@@ -24,11 +24,11 @@ class Const {
     public static inline final CHICKEN_SCALE = 0.3; // Distance from origin where chickens spawn
     public static inline final MAX_CHICKENS = 100; // Max chickens allowed to roam around
 
-    public static inline final INITIAL_ENEMY_COUNT = 30;
+    public static inline final INITIAL_ENEMY_COUNT = 24;
     public static inline final MAX_ENEMIES = 400;
-    public static inline final ENEMY_SPAWN_RATE = 1;
+    public static inline final ENEMY_SPAWN_RATE = 0.4;
 
-    public static inline final WAVE_SPAWN_TIME = 10.0; // Seconds between waves
+    public static inline final WAVE_SPAWN_TIME = 11.0; // Seconds between waves
 
     public static inline final DASH_COOLDOWN_TIME = 0.5;
 

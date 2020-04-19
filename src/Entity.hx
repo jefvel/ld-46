@@ -32,10 +32,13 @@ class Entity extends h3d.scene.Object {
         Game.instance().removeEntity(this);
     }
 
+    function onBounce() {}
+
     public function update(dt: Float) {
         // Clamp max speed
         var v = new Vector(this.vx, this.vy);
-        if (v.length() > this.maxSpeed) {
+        var lSq = v.lengthSq();
+        if (lSq > this.maxSpeed * this.maxSpeed) {
             v.normalize();
             v.scale3(this.maxSpeed);
             this.vx = v.x;
@@ -51,6 +54,9 @@ class Entity extends h3d.scene.Object {
         this.vz *= friction;
 
         if (this.z <= 0) {
+            if (vz < -0.1) {
+                onBounce();
+            }
             vz *= -0.8;
             z = 0;
             vx *= friction * 0.3;

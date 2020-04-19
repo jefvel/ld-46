@@ -12,7 +12,7 @@ class King extends Entity {
         sprite = hxd.Res.img.king_tilesheet.toAnimatedSprite();
         addChild(sprite);
         sprite.originX = 64;
-        sprite.originY = 128;
+        sprite.originY = 118;
 
         this.x = playState.foodPile.x;
         this.y = playState.foodPile.y - 0.1;
