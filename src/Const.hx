@@ -30,6 +30,8 @@ class Const {
 
     public static inline final WAVE_SPAWN_TIME = 10.0; // Seconds between waves
 
+    public static inline final DASH_COOLDOWN_TIME = 0.5;
+
     // Physics groups and masks 
     public static inline final AllGroup : UInt16 = -1;
     public static inline final NoGroup : UInt16 = 0;

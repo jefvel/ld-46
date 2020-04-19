@@ -102,6 +102,8 @@ class Chomp extends Entity {
                 closestEnemy.remove();
                 var impHead = new FoodItem("DeadImp");
                 baggage.push(impHead);
+                hxd.Res.sound.flipper.play(false, 0.3);
+                dashCombo ++;
             }
         }
     }
@@ -118,13 +120,17 @@ class Chomp extends Entity {
 
         injured = true;
         injureTime = maxInjureTime;
+        hxd.Res.sound.hurt.play(false, 0.4);
     }
 
+    var dashCombo = 0;
+    var dashCooldown = 0.0;
     public function dash() {
-        if (dashing || injured) {
+        if (dashing || injured || dashCooldown >= 0.0) {
             return;
         }
 
+        dashCombo = 0;
         dashing = true;
         dashTime = 0.1;
     }
@@ -141,6 +147,10 @@ class Chomp extends Entity {
     }
 
     override function update(dt:Float) {
+        if (dashCooldown >= 0.0) {
+            dashCooldown -= dt;
+        }
+
         if (currentlyLaunched) {
             maxSpeed = 10000;
         } else if (returning) {
@@ -164,6 +174,11 @@ class Chomp extends Entity {
             dashTime -= dt;
             if (dashTime <= 0) {
                 dashing = false;
+                
+                // If dash doesn't hit a single enemy, add a dash cooldown
+                if (dashCombo == 0) {
+                    dashCooldown = Const.DASH_COOLDOWN_TIME;
+                }
             }
         } else {
             friction = defaultFriction;
