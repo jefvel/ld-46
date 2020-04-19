@@ -68,6 +68,8 @@ class Imp extends Entity {
         stealing = true;
     }
 
+    var customAnimOffset = Math.random();
+
     function runAwayWithFood() {
         var stealAmount = 1;
         var itemAmount = this.playState.foodPile.itemCount();
@@ -92,10 +94,15 @@ class Imp extends Entity {
     public var stealing = false;
     public var invisible = false;
 
+    public var draggingKing = false;
+
     var stealTimer = 1.0 + Math.random();
     var runAwayX = 0.;
     var runAwayY = 0.;
     var runningAway = false;
+
+    var foodPileOffsetX = Math.random() * 6 - 3.0;
+    var foodPileOffsetY = Math.random() * 2 - 1.0;
 
     override function update(dt:Float) {
         super.update(dt);
@@ -158,14 +165,27 @@ class Imp extends Entity {
         }
 
         if (stealing && !runningAway) {
-            targetX = playState.foodPile.x;
-            targetY = playState.foodPile.y;
-            if (stealTimer >= 0) {
-                stealTimer -= dt;
+
+            targetX = playState.foodPile.x + foodPileOffsetX;
+            targetY = playState.foodPile.y + foodPileOffsetY;
+
+            var foodAvailable = playState.foodPile.itemCount() > 0;
+
+            if (foodAvailable && !playState.king.dead) {
+                if (stealTimer >= 0) {
+                    stealTimer -= dt;
+                } else {
+                    draggingKing = false;
+                    maxSpeed = 0.1;
+                    runningAway = true;
+                    runAwayWithFood();
+                } 
             } else {
-                maxSpeed = 0.1;
-                runningAway = true;
-                runAwayWithFood();
+                var dx = targetX - x;
+                var dy = targetY - y;
+                if (dx * dx + dy * dy < 0.1) {
+                    this.draggingKing = true;
+                }
             }
         }
 
@@ -178,26 +198,31 @@ class Imp extends Entity {
         var dx = targetX - x;
         var dy = targetY - y;
 
-        sprite.flipX = dx > 0;
 
         vx = dx * 0.4;
         vy = dy * 0.4;
 
-        var d = Math.sqrt(dx * dx + dy * dy);
-        if (runningAway && (d < 0.1)) {
+        sprite.flipX = dx > 0;
+
+        var d = (dx * dx + dy * dy);
+        var atTarget = (d < 0.1 * 0.1);
+        if (runningAway && atTarget) {
             this.remove();
         }
 
-        if (hanging) {
-            sprite.play("Hanging");
+        if (draggingKing && atTarget) {
+            sprite.play("Pulling", true, false, customAnimOffset);
+            sprite.flipX = playState.king.x > x;
+        } else if (hanging) {
+            sprite.play("Hanging", true, false, customAnimOffset);
         } else if (vx * vx + vy * vy > 0.05 * 0.05) {
-            if (stealing) {
-                sprite.play("WalkWithFood");
+            if (stealing && runningAway) {
+                sprite.play("WalkWithFood", true, false, customAnimOffset);
             } else {
-                sprite.play("Walk");
+                sprite.play("Walk", true, false, customAnimOffset);
             }
         } else {
-            sprite.play("Idle");
+            sprite.play("Idle", true, false, customAnimOffset);
         }
     }
 }

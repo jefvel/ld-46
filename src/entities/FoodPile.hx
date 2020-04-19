@@ -19,7 +19,7 @@ class FoodPile extends Entity {
     var pileDepthStep = 0.1;
     var pileLevel = 0;
     var pileLevelItems = 0;
-    var pileLevelItemsLimit = 25;
+    var pileLevelItemsLimit = 6;
     var pileLevelItemsLimitStep = 5;
     var pileLevelItemsLimitMin = 5;
 
@@ -57,7 +57,7 @@ class FoodPile extends Entity {
     override function update(dt:Float) {
         super.update(dt);
         shadow.x = this.x;
-        shadow.y = this.y + 1;
+        shadow.y = this.y + 9;
         if (moveQueue.length > 0) {
             var i = moveQueue[0];
 
@@ -140,7 +140,9 @@ class FoodPile extends Entity {
         var item = foodItems.pop();
         this.removeChild(item);
         pileLevelItems--;
-        decreaseLevel();
+        if (pileLevelItems < 0) {
+            decreaseLevel();
+        }
         return item;
     }
 

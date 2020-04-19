@@ -27,7 +27,7 @@ class PlayState extends kek.GameState {
 
   var pole: kek.graphics.AnimatedSprite;
 
-  var king : entities.King;
+  public var king : entities.King;
   
   public var foodPile: FoodPile;
 
@@ -43,7 +43,17 @@ class PlayState extends kek.GameState {
 
   var arrow : Arrow;
 
+  var musicA : hxd.snd.Channel;
+  //var musicB : hxd.snd.Channel;
+  var musicC : hxd.snd.Channel;
+
+  public var gameOver = false;
+
   public override function onEnter() {
+    musicA = hxd.Res.music.a.play(true, 1.0);
+    //musicB = hxd.Res.music.b.play(true, 0.0);
+    musicC = hxd.Res.music.c.play(true, 0.0);
+
     enemies = [];
     chickens = [];
     var meshSize = Const.WORLD_WIDTH / 4;
@@ -88,10 +98,14 @@ class PlayState extends kek.GameState {
 
     king = new entities.King(game.s3d, this);
 
+    /*
     groundInteractor = new h3d.scene.Interactive(ground.getCollider(), game.s3d);
-    groundInteractor.onMove = groundInteractor.onCheck = function(e:hxd.Event) {
+    groundInteractor.onPush = groundInteractor.onMove = groundInteractor.onCheck = function(e:hxd.Event) {
       cursorPos.set(e.relX, e.relY, e.relZ);
     };
+    */
+
+    this.groundCollider = ground.getCollider();
 
     // Day
     //game.s3d.lightSystem.ambientLight.set(0.93, 0.93, 1.0);
@@ -112,6 +126,8 @@ class PlayState extends kek.GameState {
     }
     spawnFormation();
   }
+
+  var groundCollider: h3d.col.Collider;
 
   var formationWidth = 2;
   var formationHeight = 2;
@@ -158,7 +174,7 @@ class PlayState extends kek.GameState {
     var w = formationWidth;
     var h = formationHeight;
     var d = 6;
-    var ox = 0 + Math.random() * 20 - 10;
+    var ox = 0 + Math.random() * 50 - 25;
     var oy = -50;
 
     for (x in 0...w) {
@@ -199,6 +215,20 @@ class PlayState extends kek.GameState {
   }
   
   override function onEvent(e:Event) {
+    if (gameOver) {
+      return;
+    }
+
+    if (e.kind == EMove || e.kind == EPush) {
+      var ray = game.s3d.camera.rayFromScreen(e.relX, e.relY);
+      var e = groundCollider.rayIntersection(ray, true);
+      var p = ray.getPos();
+      var d = ray.getDir();
+      cursorPos.x = p.x + d.x * e;
+      cursorPos.y = p.y + d.y * e;
+      cursorPos.z = p.z + d.z * e;
+    }
+
     if (e.kind == EPush) {
       var catchDist = 3;
 
@@ -252,11 +282,54 @@ class PlayState extends kek.GameState {
 
   // When launched he can fly this far
   var chompFlyRadius = 16;
+
+  public var kingUnderDistress = false;
+  public var kingDead = false;
+
+  public function initGameOver() {
+    musicA.fadeTo(0);
+    musicC.fadeTo(0);
+  }
   
   public override function update(dt: Float) {
-    this.spawnChicken(dt);
-    this.spawnEnemies(dt);
-    this.checkNewWave(dt);
+    if (!gameOver) {
+      this.spawnChicken(dt);
+      this.spawnEnemies(dt);
+      this.checkNewWave(dt);
+    } else {
+      stepGameOver(dt);
+    }
+
+    if (!gameOver) {
+      if (chomp.returning) {
+        musicA.volume = 0.0;
+        musicC.volume = 1.0;
+      } else {
+        musicC.volume = 0.0;
+        musicA.volume = 1.0;
+      }
+    }
+
+    kingUnderDistress = false;
+    kingDead = false;
+
+    var pullCount = 0;
+    for (e in enemies) {
+      if (e.draggingKing) {
+        pullCount ++;
+      }
+    }
+
+    if (pullCount > 0) {
+      kingUnderDistress = true;
+    }
+    if (pullCount >= Const.LETHAL_MOB_SIZE) {
+      kingDead = true;
+      if (!gameOver) initGameOver();
+      gameOver = true;
+    }
+
+    king.setDistressed(kingUnderDistress);
 
     if (chomp.dragging) {
       var cy = Math.max(0.1, cursorPos.y);
@@ -288,6 +361,20 @@ class PlayState extends kek.GameState {
     sociallyDistance();
   }
 
+  var deadTimer = 0.4;
+  function stepGameOver(dt : Float) {
+      camZoom *= 0.992;
+      if (camZoom < 0.5) {
+        camZoom = 0.5;
+        deadTimer -= dt;
+      }
+
+      if (deadTimer <= 0 && !king.dead) {
+        king.kill();
+      }
+  }
+
+  var camZoom = 1.0;
   public override function onRender(e:Engine) {
     super.onRender(e);
     arrow.visible = chomp.dragging;
@@ -302,18 +389,27 @@ class PlayState extends kek.GameState {
       camTarget.set(chomp.x * 0.2, chomp.y * 0.2, 0);
     }
 
+    if (gameOver) {
+      camPos.x = king.x * 0.8;
+      camPos.y = camBaseY * camZoom + king.y;
+      camPos.z = 17 * camZoom;
+      camTarget.set(king.x, king.y, 1.0);
+    }
+
     camTarget.x += Math.sin(cameraSway) * 0.3;
     camTarget.z += Math.sin(cameraSway) * 0.2;
 
     var cam = game.s3d.camera;
 
-    cam.pos.x += (camPos.x - cam.pos.x) * 0.3;
-    cam.pos.y += (camPos.y - cam.pos.y) * 0.3;
-    cam.pos.z += (camPos.z - cam.pos.z) * 0.3;
+    var camSpeed = 0.2;
 
-    cam.target.x += (camTarget.x - cam.target.x) * 0.3;
-    cam.target.y += (camTarget.y - cam.target.y) * 0.3;
-    cam.target.z += (camTarget.z - cam.target.z) * 0.3;
+    cam.pos.x += (camPos.x - cam.pos.x) * camSpeed;
+    cam.pos.y += (camPos.y - cam.pos.y) * camSpeed;
+    cam.pos.z += (camPos.z - cam.pos.z) * camSpeed;
+
+    cam.target.x += (camTarget.x - cam.target.x) * camSpeed;
+    cam.target.y += (camTarget.y - cam.target.y) * camSpeed;
+    cam.target.z += (camTarget.z - cam.target.z) * camSpeed;
   }
 
   var timeSinceLastWave = .0;

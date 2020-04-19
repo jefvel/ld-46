@@ -32,6 +32,8 @@ class Const {
 
     public static inline final DASH_COOLDOWN_TIME = 0.5;
 
+    public static inline final LETHAL_MOB_SIZE = 1; // Amount of imps that can't get food from king
+
     // Physics groups and masks 
     public static inline final AllGroup : UInt16 = -1;
     public static inline final NoGroup : UInt16 = 0;

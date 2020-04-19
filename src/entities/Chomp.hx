@@ -109,8 +109,9 @@ class Chomp extends Entity {
                 dx /= closestDist;
                 dy /= closestDist;
 
-                var impactX = dx * 10;
-                var impactY = dy * 10;
+                var extra = 6. + Math.random() * 6;
+                var impactX = dx * extra;
+                var impactY = dy * extra;
 
                 vx = -dx * 1.1;
                 vy = -dy * 1.5;
@@ -175,6 +176,10 @@ class Chomp extends Entity {
 
 
     function emptyBaggage() {
+        if (baggage.length > 0) {
+            playState.king.pleased();
+        }
+
         while(baggage.length > 0) {
             var item = baggage.pop();
             playState.foodPile.pushFoodItem(item);

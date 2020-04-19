@@ -106,6 +106,24 @@
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
     "duration": 100
+   },
+   {
+    "filename": "imp 12.aseprite",
+    "frame": { "x": 0, "y": 195, "w": 64, "h": 64 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
+    "duration": 100
+   },
+   {
+    "filename": "imp 13.aseprite",
+    "frame": { "x": 65, "y": 195, "w": 64, "h": 64 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
+    "duration": 100
    }
  ],
  "meta": {
@@ -113,14 +131,15 @@
   "version": "1.2.16.3",
   "image": "imp.png",
   "format": "RGBA8888",
-  "size": { "w": 259, "h": 194 },
+  "size": { "w": 259, "h": 259 },
   "scale": "1",
   "frameTags": [
    { "name": "Idle", "from": 0, "to": 3, "direction": "forward" },
    { "name": "Walk", "from": 4, "to": 5, "direction": "forward" },
    { "name": "WalkWithFood", "from": 6, "to": 7, "direction": "forward" },
    { "name": "Dyin", "from": 8, "to": 9, "direction": "forward" },
-   { "name": "Hanging", "from": 10, "to": 11, "direction": "forward" }
+   { "name": "Hanging", "from": 10, "to": 11, "direction": "forward" },
+   { "name": "Pulling", "from": 12, "to": 13, "direction": "forward" }
   ]
  }
 }

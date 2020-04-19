@@ -1,20 +1,146 @@
 { "frames": [
    {
     "filename": "king 0.aseprite",
-    "frame": { "x": 0, "y": 0, "w": 128, "h": 128 },
+    "frame": { "x": 0, "y": 0, "w": 256, "h": 128 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
-    "sourceSize": { "w": 128, "h": 128 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
     "duration": 100
    },
    {
     "filename": "king 1.aseprite",
-    "frame": { "x": 0, "y": 0, "w": 128, "h": 128 },
+    "frame": { "x": 0, "y": 0, "w": 256, "h": 128 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
-    "sourceSize": { "w": 128, "h": 128 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "king 2.aseprite",
+    "frame": { "x": 257, "y": 0, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "king 3.aseprite",
+    "frame": { "x": 514, "y": 0, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "king 4.aseprite",
+    "frame": { "x": 771, "y": 0, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "king 5.aseprite",
+    "frame": { "x": 0, "y": 129, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "king 6.aseprite",
+    "frame": { "x": 514, "y": 0, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "king 7.aseprite",
+    "frame": { "x": 257, "y": 129, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 300
+   },
+   {
+    "filename": "king 8.aseprite",
+    "frame": { "x": 514, "y": 0, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "king 9.aseprite",
+    "frame": { "x": 514, "y": 129, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 300
+   },
+   {
+    "filename": "king 10.aseprite",
+    "frame": { "x": 514, "y": 0, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "king 11.aseprite",
+    "frame": { "x": 771, "y": 129, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 170
+   },
+   {
+    "filename": "king 12.aseprite",
+    "frame": { "x": 0, "y": 258, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 140
+   },
+   {
+    "filename": "king 13.aseprite",
+    "frame": { "x": 257, "y": 258, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "king 14.aseprite",
+    "frame": { "x": 514, "y": 258, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "king 15.aseprite",
+    "frame": { "x": 771, "y": 258, "w": 256, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 128 },
+    "sourceSize": { "w": 256, "h": 128 },
     "duration": 100
    }
  ],
@@ -23,10 +149,13 @@
   "version": "1.2.16.3",
   "image": "king.png",
   "format": "RGBA8888",
-  "size": { "w": 128, "h": 128 },
+  "size": { "w": 1027, "h": 386 },
   "scale": "1",
   "frameTags": [
-   { "name": "Sitting", "from": 0, "to": 1, "direction": "forward" }
+   { "name": "Sitting", "from": 0, "to": 1, "direction": "forward" },
+   { "name": "Pleased", "from": 2, "to": 2, "direction": "forward" },
+   { "name": "Distressed", "from": 3, "to": 5, "direction": "forward" },
+   { "name": "Dying", "from": 6, "to": 15, "direction": "forward" }
   ]
  }
 }
