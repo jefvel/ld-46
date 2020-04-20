@@ -1,5 +1,6 @@
 package gamestates;
 
+import entities.FoodItem;
 import entities.FoodPile;
 import hxd.Event;
 import h3d.mat.Defaults;
@@ -40,6 +41,7 @@ class PlayState extends kek.GameState {
 
   public var enemies : Array<entities.Imp>;
   public var chickens: Array<Entity>;
+  public var guardians : Array<entities.Guardian>;
 
   var arrow : Arrow;
 
@@ -58,6 +60,8 @@ class PlayState extends kek.GameState {
 
     enemies = [];
     chickens = [];
+    guardians = [];
+
     var meshSize = Const.WORLD_WIDTH / 4;
     groundmesh = new h3d.prim.Cube(meshSize, meshSize, 0.99, true);
     groundmesh.unindex();
@@ -82,6 +86,7 @@ class PlayState extends kek.GameState {
     game.s3d.addChild(shadow);
 
     pole = hxd.Res.img.pole_tilesheet.toAnimatedSprite();
+    pole.y = -0.5;
     pole.originX = 32;
     pole.originY = 60;
     game.s3d.addChild(pole);
@@ -95,17 +100,23 @@ class PlayState extends kek.GameState {
       this
     );
     game.s3d.addChild(foodPile);
-    foodPile.x = 3;
+    foodPile.x = 6;
     foodPile.y = 3;
 
-    king = new entities.King(game.s3d, this);
+    var foodTypes = [
+      "Apple",
+      "ChickenBone",
+    ];
 
-    /*
-    groundInteractor = new h3d.scene.Interactive(ground.getCollider(), game.s3d);
-    groundInteractor.onPush = groundInteractor.onMove = groundInteractor.onCheck = function(e:hxd.Event) {
-      cursorPos.set(e.relX, e.relY, e.relZ);
-    };
-    */
+    // Add initial food to food pile
+    for (i in 0...Const.INITIAL_FOOD) {
+      var type = foodTypes[Std.int(Math.random() * foodTypes.length)];
+      var item = new FoodItem(type);
+      foodPile.pushFoodItem(item, true);
+    }
+
+
+    king = new entities.King(game.s3d, this);
 
     this.groundCollider = ground.getCollider();
 
@@ -122,7 +133,6 @@ class PlayState extends kek.GameState {
     camPos.set(0, camBaseY, 17);
     camTarget.set(0, 0, 0);
 
-    foodPile.camera = this.game.s3d.camera;
     for (i in 0...Const.INITIAL_ENEMY_COUNT) {
       spawnEnemy();
     }
@@ -130,13 +140,39 @@ class PlayState extends kek.GameState {
 
     // Add tutorial guide
     tutorial = new Tutorial(game.s2d);
+    //addGuardian();
+    scoreThreshold = Const.POINTS_PER_GUARDIAN;
   }
+
+  var scoreThreshold : Float;
 
   override function onLeave() {
     super.onLeave();
     musicA.stop();
     musicC.stop();
     game.s3d.removeChildren();
+  }
+
+  public function addGuardian() {
+    var g = new entities.Guardian(game.s3d, this);
+    var guardAreaWidth = 20;
+    g.y = 5 + Math.random() * 2.0;
+    g.x = Math.random() * guardAreaWidth - guardAreaWidth * 0.5;
+  }
+
+  var score = 0;
+  var scoreAccum = 0;
+  var recentGuardBonus = false;
+  public function increaseScore(amount = 1) {
+    score += amount;
+    scoreAccum += amount;
+    var s = Std.int(scoreThreshold);
+    if (scoreAccum >= s) {
+      scoreAccum -= s;
+      scoreThreshold *= Const.GUARD_PRICE_INCREASE;
+      addGuardian();
+      recentGuardBonus = true;
+    }
   }
 
   var groundCollider: h3d.col.Collider;
@@ -211,6 +247,7 @@ class PlayState extends kek.GameState {
       formationHeight ++;
     }
   }
+
 
   function createEnemyAt(x, y, disciplined = false) {
     var imp = new entities.Imp(game.s3d, chomp, this, disciplined);
@@ -312,6 +349,17 @@ class PlayState extends kek.GameState {
     musicA.fadeTo(0);
     musicC.fadeTo(0);
   }
+
+  var gb : CoolNotification;
+  function showGuardBonus() {
+    if (gb != null) {
+      gb.remove();
+    }
+    var b = new h2d.Bitmap(hxd.Res.img.bonus.toTile());
+    gb = new CoolNotification(game.s2d, b);
+    recentGuardBonus = false;
+    hxd.Res.sound.bonus.play(false, 0.3);
+  }
   
   public override function update(dt: Float) {
     if (!gameOver) {
@@ -320,6 +368,10 @@ class PlayState extends kek.GameState {
       this.checkNewWave(dt);
     } else {
       stepGameOver(dt);
+    }
+
+    if (recentGuardBonus) {
+      showGuardBonus();
     }
 
     if (!gameOver) {
@@ -388,6 +440,13 @@ class PlayState extends kek.GameState {
     tutorial.visible = !gameOver;
     if (!chomp.currentlyLaunched && !chomp.returning) {
       tutorial.showLaunchStep();
+    }
+    if (chomp.currentlyLaunched) {
+      tutorial.playFlyStep();
+    }
+
+    if (chomp.returning) {
+      tutorial.playDashStep();
     }
   }
 

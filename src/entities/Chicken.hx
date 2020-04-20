@@ -35,7 +35,7 @@ class Chicken extends Entity {
 
     var foodpile:  FoodPile;
     var foodpileThreshold = 0.2;
-    var finishRadius = 3.0;
+    var finishRadius = 4.0;
 
     var playState: PlayState;
 
@@ -106,13 +106,11 @@ class Chicken extends Entity {
                     }
                 case Follow:
                     if (chomp.readyToLaunch()) {
+                        playState.increaseScore();
                         this.curBehaviour = Behaviour.GoToPile;
                     }
 
                     moveToChomp();
-                    if (this.x*this.x + this.y*this.y < this.finishRadius*this.finishRadius) {
-                        this.becomeFood();
-                    }
                 case GoToPile:
                     moveToPile();
                 case Food:
@@ -178,12 +176,17 @@ class Chicken extends Entity {
     }
 
     
+    var dead = false;
     function becomeFood() {
+        if (dead) return;
+        dead = true;
         this.curBehaviour = Food;
 
         var foodItem = new entities.FoodItem("ChickenBone");
         this.foodpile.pushFoodItem(foodItem);
-        
+
+        this.remove();
+
         // this.launchChickenBone();
     }
 

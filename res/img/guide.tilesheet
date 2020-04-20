@@ -1,39 +1,84 @@
 { "frames": [
    {
     "filename": "guide 0.aseprite",
-    "frame": { "x": 0, "y": 0, "w": 128, "h": 64 },
+    "frame": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 64 },
-    "sourceSize": { "w": 128, "h": 64 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
     "duration": 400
    },
    {
     "filename": "guide 1.aseprite",
-    "frame": { "x": 129, "y": 0, "w": 128, "h": 64 },
+    "frame": { "x": 65, "y": 0, "w": 64, "h": 64 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 64 },
-    "sourceSize": { "w": 128, "h": 64 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
     "duration": 400
    },
    {
     "filename": "guide 2.aseprite",
-    "frame": { "x": 0, "y": 65, "w": 128, "h": 64 },
+    "frame": { "x": 130, "y": 0, "w": 64, "h": 64 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 64 },
-    "sourceSize": { "w": 128, "h": 64 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
     "duration": 400
    },
    {
     "filename": "guide 3.aseprite",
-    "frame": { "x": 129, "y": 65, "w": 128, "h": 64 },
+    "frame": { "x": 0, "y": 65, "w": 64, "h": 64 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 64 },
-    "sourceSize": { "w": 128, "h": 64 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
     "duration": 800
+   },
+   {
+    "filename": "guide 4.aseprite",
+    "frame": { "x": 65, "y": 65, "w": 64, "h": 64 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
+    "duration": 100
+   },
+   {
+    "filename": "guide 5.aseprite",
+    "frame": { "x": 130, "y": 65, "w": 64, "h": 64 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
+    "duration": 100
+   },
+   {
+    "filename": "guide 6.aseprite",
+    "frame": { "x": 0, "y": 130, "w": 64, "h": 64 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
+    "duration": 100
+   },
+   {
+    "filename": "guide 7.aseprite",
+    "frame": { "x": 65, "y": 130, "w": 64, "h": 64 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
+    "duration": 300
+   },
+   {
+    "filename": "guide 8.aseprite",
+    "frame": { "x": 130, "y": 130, "w": 64, "h": 64 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
+    "sourceSize": { "w": 64, "h": 64 },
+    "duration": 300
    }
  ],
  "meta": {
@@ -41,10 +86,12 @@
   "version": "1.2.16.3",
   "image": "guide.png",
   "format": "RGBA8888",
-  "size": { "w": 257, "h": 129 },
+  "size": { "w": 194, "h": 194 },
   "scale": "1",
   "frameTags": [
-   { "name": "Launch", "from": 0, "to": 3, "direction": "forward" }
+   { "name": "Launch", "from": 0, "to": 3, "direction": "forward" },
+   { "name": "Flying", "from": 4, "to": 6, "direction": "forward" },
+   { "name": "DashInfo", "from": 7, "to": 8, "direction": "forward" }
   ]
  }
 }

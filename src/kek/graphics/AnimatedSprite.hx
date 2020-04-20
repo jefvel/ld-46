@@ -228,7 +228,7 @@ class AnimatedSprite extends Mesh {
                 }
 			} else {
 				if (currentFrame > to) {
-                    currentFrame = to;
+                    currentFrame = to - 1;
 					finished = true;
 				}
 			}

@@ -78,6 +78,10 @@ class Imp extends Entity {
             stealAmount = Math.floor(itemAmount / 4);
         }
 
+        if (itemAmount > 50) {
+            stealAmount = Math.floor(itemAmount / 3);
+        }
+
         for (i in 0...stealAmount) {
             var item = this.playState.foodPile.popFoodItem();
             if (item != null) {
@@ -99,10 +103,16 @@ class Imp extends Entity {
     var stealTimer = 1.0 + Math.random();
     var runAwayX = 0.;
     var runAwayY = 0.;
-    var runningAway = false;
+    public var runningAway = false;
 
     var foodPileOffsetX = Math.random() * 6 - 3.0;
     var foodPileOffsetY = Math.random() * 2 - 1.0;
+
+    public function kill(impactX, impactY) {
+        // Spawn imp corpse
+        new entities.Corpse(this.parent, x, y, impactX, impactY);
+        this.remove();
+    }
 
     override function update(dt:Float) {
         super.update(dt);
@@ -114,7 +124,7 @@ class Imp extends Entity {
         var targetX = x;
         var targetY = y;
 
-        var impChaseDist = 35;
+        var impChaseDist = 31;
         var impCatchDist = 1.8;
 
         if (disciplined && !stealing) {

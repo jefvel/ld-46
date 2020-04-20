@@ -1,10 +1,8 @@
 package entities;
 
 import gamestates.PlayState;
-import h3d.Camera;
 
 class FoodPile extends Entity {
-    public var camera : Camera;
     public var shadow : Shadow;
     public var addShadow : Shadow->Void;
     public var removeShadow : Shadow->Void;
@@ -22,6 +20,8 @@ class FoodPile extends Entity {
     var pileLevelItemsLimit = 6;
     var pileLevelItemsLimitStep = 5;
     var pileLevelItemsLimitMin = 5;
+
+    public var totalAddedFood = 0;
 
     public function getPileHeight() {
         var highest = 0.0;
@@ -71,7 +71,7 @@ class FoodPile extends Entity {
                 return;
             }
 
-            var s = 0.8;
+            var s = 0.4;
             var dx = (i.targetPos.x - i.x) * s;
             var dy = (i.targetPos.y - i.y) * s;
             var dz = (i.targetPos.z - i.z) * s;
@@ -90,10 +90,12 @@ class FoodPile extends Entity {
         }
     }
     
-    public function pushFoodItem(item: FoodItem) {
+    public function pushFoodItem(item: FoodItem, immediate = false) {
         if (this.playState.gameOver) {
             return;
         }
+
+        totalAddedFood ++;
 
         var chomp = playState.chomp;
         item.x = (Math.random() * 0.4 - 0.2) - this.x;
@@ -103,13 +105,19 @@ class FoodPile extends Entity {
         item.targetPos.z = pileTop + Math.random() * pileTopError;
         item.targetPos.x = (Math.random() - 0.5) * 2.0 * pileRadius;
         item.targetPos.y = pileDepth + 0.00001 -foodItems.length * 0.001;
-        var camFor = camera.pos.sub(camera.target);
+
         item.rotate(0, Math.random() * Math.PI * 2, 0.0);
         //item.setRotationAxis(camFor.x, camFor.y, camFor.z, (Math.random() * 0.5 + 0.5) * Math.PI);
         foodItems.push(item);
         this.addChild(item);
 
-        moveQueue.push(item);
+        if (!immediate) {
+            moveQueue.push(item);
+        } else {
+            item.x = item.targetPos.x;
+            item.y = item.targetPos.y;
+            item.z = item.targetPos.z;
+        }
 
         pileLevelItems++;
         if (pileLevelItems == pileLevelItemsLimit) {

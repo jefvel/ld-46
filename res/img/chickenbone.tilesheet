@@ -16,6 +16,15 @@
     "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
     "sourceSize": { "w": 32, "h": 32 },
     "duration": 1000
+   },
+   {
+    "filename": "chickenbone 2.aseprite",
+    "frame": { "x": 0, "y": 33, "w": 32, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+    "sourceSize": { "w": 32, "h": 32 },
+    "duration": 1000
    }
  ],
  "meta": {
@@ -23,11 +32,12 @@
   "version": "1.2.16.3",
   "image": "chickenbone.png",
   "format": "RGBA8888",
-  "size": { "w": 65, "h": 32 },
+  "size": { "w": 65, "h": 65 },
   "scale": "1",
   "frameTags": [
    { "name": "ChickenBone", "from": 0, "to": 0, "direction": "forward" },
-   { "name": "DeadImp", "from": 1, "to": 1, "direction": "forward" }
+   { "name": "DeadImp", "from": 1, "to": 1, "direction": "forward" },
+   { "name": "Apple", "from": 2, "to": 2, "direction": "forward" }
   ]
  }
 }

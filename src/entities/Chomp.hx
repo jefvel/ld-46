@@ -32,7 +32,6 @@ class Chomp extends Entity {
         sprite.originX = 32;
         sprite.originY = 64;
 
-
         this.playState = state;
 
         this.addChild(sprite);
@@ -51,7 +50,7 @@ class Chomp extends Entity {
 
     public var chaserCount = 0;
     
-    var defaultInvulnerableTime = 0.1;
+    var defaultInvulnerableTime = 0.13;
     var invulnerableTime = 0.0;
 
     public function startDragging() {
@@ -74,7 +73,7 @@ class Chomp extends Entity {
 
     var dashing = false;
     var dashTime = 0.0;
-    var maxDashTime = 0.35;
+    var maxDashTime = 0.32;
 
     function hitClosebyEnemies() {
         var closestDist = Math.POSITIVE_INFINITY;
@@ -98,6 +97,7 @@ class Chomp extends Entity {
                 closestEnemy = e;
             }
         }
+        var boosted = false;
 
         if (closestEnemy != null) {
             var dx = closestEnemy.x - this.x;
@@ -109,6 +109,7 @@ class Chomp extends Entity {
             }
 
             if (closestDist < 3) {
+                boosted = true;
                 dx /= closestDist;
                 dy /= closestDist;
 
@@ -125,17 +126,14 @@ class Chomp extends Entity {
                 dashTime = Math.min(dashTime, maxDashTime);
 
                 // todo Add the monster meat to baggagae
-                closestEnemy.remove();
                 var impHead = new FoodItem("DeadImp");
                 baggage.push(impHead);
                 hxd.Res.sound.flipper.play(false, 0.3);
                 dashCombo ++;
 
-
-                // Spawn imp corpse
-                new entities.Corpse(this.parent, closestEnemy.x, closestEnemy.y, impactX, impactY);
+                closestEnemy.kill(impactX, impactY);
             }
-        }
+        } 
     }
 
     var baggage = [];
@@ -167,6 +165,12 @@ class Chomp extends Entity {
         dashing = true;
         dashTime = 0.1;
         hxd.Res.sound.dash.play(false, 0.4);
+
+        var v = new h3d.Vector(0 - x, 0 - y);
+        v.normalize();
+        v.scale3(0.5);
+        vx = v.x;
+        vy = v.y;
     }
 
     public function readyToLaunch() {
@@ -179,7 +183,6 @@ class Chomp extends Entity {
         }
     }
 
-
     function emptyBaggage() {
         if (baggage.length > 0) {
             playState.king.pleased();
@@ -188,6 +191,7 @@ class Chomp extends Entity {
         while(baggage.length > 0) {
             var item = baggage.pop();
             playState.foodPile.pushFoodItem(item);
+            playState.increaseScore();
         }
     }
 

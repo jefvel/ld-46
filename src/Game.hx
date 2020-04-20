@@ -75,7 +75,7 @@ class Game extends hxd.App {
     function configRenderer() {
         hxd.res.Image.DEFAULT_FILTER = Nearest;
 
-        engine.backgroundColor = 0xDDDEFE;
+        engine.backgroundColor = 0xFEFEFE;
         engine.autoResize = true;
         modelCache = new h3d.prim.ModelCache();
         /*
@@ -121,6 +121,8 @@ class Game extends hxd.App {
 
         // Add filter for pixel perfect 2D rendering.
         s2d.filter = new h2d.filter.Nothing();
+
+        initTransitions();
 
 		onResizeEvent();
     }
@@ -189,6 +191,8 @@ class Game extends hxd.App {
         var d = dt * timeScale;
         super.update(d);
         timeSinceLast += d;
+
+        updateTransitions(dt);
 
         while(timeSinceLast > Const.TICK_TIME) {
             timeSinceLast -= Const.TICK_TIME;
@@ -273,7 +277,44 @@ class Game extends hxd.App {
 #end
         // Load CastleDB data.
         //Data.load(Res.data.entry.getBytes().toString());
-		new Game(new gamestates.PlayState());
+		new Game(new gamestates.MenuState());
+    }
+
+    function initTransitions() {
+        var o = h2d.Tile.fromColor(0);
+        fadeOutB = new h2d.Bitmap(o, s2d);
+        fadeOutB.alpha = 0.0;
+    }
+
+    public function fadeIn() {
+
+    }
+
+    var fadeOutB: h2d.Bitmap;
+    var completionFn : Void -> Void;
+    var fadingIn = false;
+    public function fadeOut(onComplete: Void -> Void) {
+        completionFn = onComplete;
+        fadeOutB.remove();
+        s2d.addChild(fadeOutB);
+        fadingIn = true;
+    }
+
+    function updateTransitions(dt: Float) {
+        fadeOutB.width = screenWidth;
+        fadeOutB.height = screenHeight;
+        if (fadingIn) {
+            fadeOutB.alpha += (1.0 - fadeOutB.alpha) * 0.28;
+            if (fadeOutB.alpha >= 0.99999) {
+                fadingIn = false;
+                if (completionFn != null) {
+                    completionFn();
+                    completionFn = null;
+                }
+            }
+        } else {
+            fadeOutB.alpha += (0.0 - fadeOutB.alpha) * 0.3;
+        }
     }
 
 	static function main() {

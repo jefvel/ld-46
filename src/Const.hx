@@ -16,6 +16,10 @@ class Const {
     public static inline final WORLD_WIDTH = 200;
     public static inline final WORLD_HEIGHT = 200;
 
+    public static inline final INITIAL_FOOD = 5;
+
+    public static inline final POINTS_PER_GUARDIAN = 20;
+    public static inline final GUARD_PRICE_INCREASE = 1.2;
 
     // Unit auto spawn params
     public static inline final CHICKEN_SPAWN_RATE = 5; // Chickens per second
