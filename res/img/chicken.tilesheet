@@ -56,7 +56,7 @@
  ],
  "meta": {
   "app": "http://www.aseprite.org/",
-  "version": "1.2.16.3",
+  "version": "1.2.17-x64",
   "image": "chicken.png",
   "format": "RGBA8888",
   "size": { "w": 386, "h": 257 },

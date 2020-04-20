@@ -1,6 +1,7 @@
 package gamestates;
 
 import entities.FoodItem;
+import entities.GameoverText;
 import entities.FoodPile;
 import hxd.Event;
 import h3d.mat.Defaults;
@@ -15,6 +16,10 @@ class PlayState extends kek.GameState {
   public function new() {
     name = "InGame";
   }
+  
+  public var totalGameTime = 0.0;
+  
+  public var playerKillCount = 0;
 
   var groundmesh : h3d.prim.Cube;
   var ground : h3d.scene.Object;
@@ -150,6 +155,7 @@ class PlayState extends kek.GameState {
     super.onLeave();
     musicA.stop();
     musicC.stop();
+    game.s2d.removeChildren();
     game.s3d.removeChildren();
   }
 
@@ -329,7 +335,6 @@ class PlayState extends kek.GameState {
     hxd.Res.sound.launch.play(false, 0.6);
   }
 
-
   // The amount the spring chain can be stretched
   var maxChargeDistance = 3;
 
@@ -344,10 +349,13 @@ class PlayState extends kek.GameState {
   public var kingUnderDistress = false;
   public var kingDead = false;
   public var newGameReady = false;
+  public var gameoverText: GameoverText;
 
   public function initGameOver() {
     musicA.fadeTo(0);
     musicC.fadeTo(0);
+    gameoverText = new GameoverText(null, this, game.screenWidth, game.screenHeight);
+    game.s2d.addChild(gameoverText);
   }
 
   var gb : CoolNotification;
@@ -363,6 +371,7 @@ class PlayState extends kek.GameState {
   
   public override function update(dt: Float) {
     if (!gameOver) {
+      totalGameTime += dt;
       this.spawnChicken(dt);
       this.spawnEnemies(dt);
       this.checkNewWave(dt);
