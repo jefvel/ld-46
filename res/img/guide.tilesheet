@@ -1,47 +1,47 @@
 { "frames": [
    {
     "filename": "guide 0.aseprite",
-    "frame": { "x": 0, "y": 0, "w": 128, "h": 64 },
+    "frame": { "x": 0, "y": 0, "w": 64, "h": 32 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 64 },
-    "sourceSize": { "w": 128, "h": 64 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+    "sourceSize": { "w": 64, "h": 32 },
     "duration": 400
    },
    {
     "filename": "guide 1.aseprite",
-    "frame": { "x": 129, "y": 0, "w": 128, "h": 64 },
+    "frame": { "x": 65, "y": 0, "w": 64, "h": 32 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 64 },
-    "sourceSize": { "w": 128, "h": 64 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+    "sourceSize": { "w": 64, "h": 32 },
     "duration": 400
    },
    {
     "filename": "guide 2.aseprite",
-    "frame": { "x": 0, "y": 65, "w": 128, "h": 64 },
+    "frame": { "x": 0, "y": 33, "w": 64, "h": 32 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 64 },
-    "sourceSize": { "w": 128, "h": 64 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+    "sourceSize": { "w": 64, "h": 32 },
     "duration": 400
    },
    {
     "filename": "guide 3.aseprite",
-    "frame": { "x": 129, "y": 65, "w": 128, "h": 64 },
+    "frame": { "x": 65, "y": 33, "w": 64, "h": 32 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 64 },
-    "sourceSize": { "w": 128, "h": 64 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 32 },
+    "sourceSize": { "w": 64, "h": 32 },
     "duration": 800
    }
  ],
  "meta": {
   "app": "http://www.aseprite.org/",
-  "version": "1.2.16.3",
+  "version": "1.2.17-x64",
   "image": "guide.png",
   "format": "RGBA8888",
-  "size": { "w": 257, "h": 129 },
+  "size": { "w": 129, "h": 65 },
   "scale": "1",
   "frameTags": [
    { "name": "Launch", "from": 0, "to": 3, "direction": "forward" }

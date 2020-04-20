@@ -130,7 +130,7 @@ class Chomp extends Entity {
                 baggage.push(impHead);
                 hxd.Res.sound.flipper.play(false, 0.3);
                 dashCombo ++;
-
+                playState.playerKillCount++;
 
                 // Spawn imp corpse
                 new entities.Corpse(this.parent, closestEnemy.x, closestEnemy.y, impactX, impactY);

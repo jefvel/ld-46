@@ -11,6 +11,7 @@ import hxd.Event.EventKind;
 import hxd.Res;
 import hxd.Window;
 import h3d.mat.Texture;
+import kek.graphics.NumberSpriteUtil;
 
 class Game extends hxd.App {
 
@@ -108,6 +109,7 @@ class Game extends hxd.App {
         entities = [];
 
         configRenderer();
+        NumberSpriteUtil.init();
 
         //initPhysics();
 
