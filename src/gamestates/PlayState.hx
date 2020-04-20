@@ -49,6 +49,8 @@ class PlayState extends kek.GameState {
 
   public var gameOver = false;
 
+  public var tutorial: Tutorial;
+
   public override function onEnter() {
     musicA = hxd.Res.music.a.play(true, 1.0);
     //musicB = hxd.Res.music.b.play(true, 0.0);
@@ -125,6 +127,16 @@ class PlayState extends kek.GameState {
       spawnEnemy();
     }
     spawnFormation();
+
+    // Add tutorial guide
+    tutorial = new Tutorial(game.s2d);
+  }
+
+  override function onLeave() {
+    super.onLeave();
+    musicA.stop();
+    musicC.stop();
+    game.s3d.removeChildren();
   }
 
   var groundCollider: h3d.col.Collider;
@@ -174,7 +186,11 @@ class PlayState extends kek.GameState {
     var w = formationWidth;
     var h = formationHeight;
     var d = 6;
-    var ox = 0 + Math.random() * 50 - 25;
+    var xVariation = 40.0;
+    if (currentWave == 0) {
+      xVariation = 0.0;
+    }
+    var ox = 0 + Math.random() * xVariation - 0.5 * xVariation;
     var oy = -50;
 
     for (x in 0...w) {
@@ -215,6 +231,11 @@ class PlayState extends kek.GameState {
   }
   
   override function onEvent(e:Event) {
+
+    if (newGameReady && e.kind == EPush) {
+      game.setState(new PlayState());
+    }
+
     if (gameOver) {
       return;
     }
@@ -285,6 +306,7 @@ class PlayState extends kek.GameState {
 
   public var kingUnderDistress = false;
   public var kingDead = false;
+  public var newGameReady = false;
 
   public function initGameOver() {
     musicA.fadeTo(0);
@@ -359,9 +381,18 @@ class PlayState extends kek.GameState {
     }
 
     sociallyDistance();
+
+
+    // Tutorial logic
+
+    tutorial.visible = !gameOver;
+    if (!chomp.currentlyLaunched && !chomp.returning) {
+      tutorial.showLaunchStep();
+    }
   }
 
   var deadTimer = 0.4;
+  var newGameTimer = 3.0;
   function stepGameOver(dt : Float) {
       camZoom *= 0.992;
       if (camZoom < 0.5) {
@@ -371,6 +402,11 @@ class PlayState extends kek.GameState {
 
       if (deadTimer <= 0 && !king.dead) {
         king.kill();
+      }
+      
+      newGameTimer -= dt;
+      if (newGameTimer < 0) {
+        newGameReady = true;
       }
   }
 

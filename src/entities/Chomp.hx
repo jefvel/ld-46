@@ -8,6 +8,7 @@ class Chomp extends Entity {
     var bounceSounds : Array<hxd.res.Sound>;
     var bagX = 0.9;
     var bagZ = 1.3;
+
     public function new(?parent, state) {
         super(parent);
 
@@ -49,6 +50,9 @@ class Chomp extends Entity {
     public var returning = false;
 
     public var chaserCount = 0;
+    
+    var defaultInvulnerableTime = 0.1;
+    var invulnerableTime = 0.0;
 
     public function startDragging() {
         dragging = true;
@@ -70,8 +74,7 @@ class Chomp extends Entity {
 
     var dashing = false;
     var dashTime = 0.0;
-    var maxDashTime = 0.3;
-
+    var maxDashTime = 0.35;
 
     function hitClosebyEnemies() {
         var closestDist = Math.POSITIVE_INFINITY;
@@ -141,6 +144,7 @@ class Chomp extends Entity {
     var injured = false;
     var maxInjureTime = 0.4;
     var injureTime = 0.;
+
     public function injure() {
         if (injured) {
             return;
@@ -148,6 +152,7 @@ class Chomp extends Entity {
 
         injured = true;
         injureTime = maxInjureTime;
+        invulnerableTime = maxInjureTime + defaultInvulnerableTime;
         hxd.Res.sound.hurt.play(false, 0.4);
     }
 
@@ -186,9 +191,17 @@ class Chomp extends Entity {
         }
     }
 
+    public function isInvulnerable() {
+        return invulnerableTime > 0.0;
+    }
+
     override function update(dt:Float) {
         if (dashCooldown >= 0.0) {
             dashCooldown -= dt;
+        }
+
+        if (invulnerableTime >= 0.0) {
+            invulnerableTime -= dt;
         }
 
         bag.x = bagX + vx * 0.5;
@@ -249,6 +262,8 @@ class Chomp extends Entity {
                 if (waitTime <= 0) {
                     currentlyLaunched = false;
                     returning = true;
+
+                    invulnerableTime = defaultInvulnerableTime;
                 }
             } else {
                 waitTime = 0.2;

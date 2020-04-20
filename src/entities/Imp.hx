@@ -135,7 +135,7 @@ class Imp extends Entity {
             maxSpeed = 0.04;
         }
 
-        if (chomp.returning && this.z < 2) {
+        if (chomp.returning && this.z < 2 && !chomp.isInvulnerable()) {
             var dx = chomp.x - x;
             var dy = chomp.y - y;
 

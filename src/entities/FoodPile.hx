@@ -91,6 +91,10 @@ class FoodPile extends Entity {
     }
     
     public function pushFoodItem(item: FoodItem) {
+        if (this.playState.gameOver) {
+            return;
+        }
+
         var chomp = playState.chomp;
         item.x = (Math.random() * 0.4 - 0.2) - this.x;
         item.y = (Math.random() * 0.4 - 0.2) - this.y;
