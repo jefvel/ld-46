@@ -1,9 +1,13 @@
 package entities;
 
+import h3d.scene.Mesh;
+import h2d.Bitmap;
+import kek.graphics.AnimatedSprite;
 import h3d.Vector;
 
 class Chomp extends Entity {
     var sprite : kek.graphics.AnimatedSprite;
+    var dashTrail : Mesh;
     var playState : gamestates.PlayState;
     var bounceSounds : Array<hxd.res.Sound>;
     var bagX = 0.9;
@@ -35,6 +39,24 @@ class Chomp extends Entity {
         this.playState = state;
 
         this.addChild(sprite);
+
+        var dashTrailMesh = new h3d.prim.Cube(5.0, 3.0, 0.0, true);
+        dashTrailMesh.unindex();
+        dashTrailMesh.addNormals();
+        dashTrailMesh.addUVs();
+
+        var dashTrailMaterial = h3d.mat.Material.create(hxd.Res.img.dashtrail_png.toTexture());
+        dashTrailMaterial.refreshProps();
+        dashTrailMaterial.blendMode = Alpha;
+        dashTrailMaterial.texture.wrap = Clamp;
+        dashTrailMaterial.textureShader.killAlpha = true;
+        dashTrailMaterial.textureShader.killAlphaThreshold = 0.01;
+
+        dashTrail = new Mesh(dashTrailMesh, dashTrailMaterial);
+        // // dashTrail.x = 2.0;
+        // dashTrail.z = 0.8;
+        dashTrail.visible = false;
+        this.addChild(dashTrail);
 
         this.maxSpeed = 0.24;
         this.vy = 0.05;
@@ -121,6 +143,14 @@ class Chomp extends Entity {
                 vy = -dy * 1.5;
 
                 vz = 0.02;
+
+                dashTrail.visible = true;
+                var angle = Math.atan2(dy, dx);
+                dashTrail.setRotation(0, 0, angle);
+                dashTrail.x = dx * 2.0;
+                dashTrail.y = dy * 2.0;
+                // var cosAngle = new Vector(dx, dy, 0.0).dot3(new Vector(-x, -y, 0.0)) / (Math.sqrt(dx*dx + dy*dy) * Math.sqrt(x*x + y*y));
+                // dashTrail.setRotation(0, 0, Math.acos(cosAngle));
 
                 dashTime += 0.06;
                 dashTime = Math.min(dashTime, maxDashTime);
@@ -235,6 +265,7 @@ class Chomp extends Entity {
             dashTime -= dt;
             if (dashTime <= 0) {
                 dashing = false;
+                dashTrail.visible = false;
                 
                 // If dash doesn't hit a single enemy, add a dash cooldown
                 if (dashCombo == 0) {
