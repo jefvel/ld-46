@@ -132,7 +132,6 @@ class Chomp extends Entity {
                 dashCombo ++;
 
                 closestEnemy.kill(impactX, impactY);
-                playState.playerKillCount++;
             }
         } 
     }

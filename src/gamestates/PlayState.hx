@@ -147,6 +147,9 @@ class PlayState extends kek.GameState {
     tutorial = new Tutorial(game.s2d);
     //addGuardian();
     scoreThreshold = Const.POINTS_PER_GUARDIAN;
+
+
+    //initGameOver();
   }
 
   var scoreThreshold : Float;
@@ -273,10 +276,19 @@ class PlayState extends kek.GameState {
     createEnemyAt(Math.cos(angle) * distance, Math.sin(angle) * distance);
   }
   
+  var restarting = false;
   override function onEvent(e:Event) {
 
     if (newGameReady && e.kind == EPush) {
-      game.setState(new PlayState());
+      if (restarting) {
+        return;
+      }
+
+      restarting = true;
+      hxd.Res.sound.restart.play(false, 0.4);
+      game.fadeOut(() -> {
+        game.setState(new PlayState());
+      });
     }
 
     if (gameOver) {
@@ -354,8 +366,8 @@ class PlayState extends kek.GameState {
   public function initGameOver() {
     musicA.fadeTo(0);
     musicC.fadeTo(0);
-    gameoverText = new GameoverText(null, this, game.screenWidth, game.screenHeight);
-    game.s2d.addChild(gameoverText);
+    gameOver = true;
+    gameoverText = new GameoverText(game.s2d, this, game.screenWidth, game.screenHeight);
   }
 
   var gb : CoolNotification;
@@ -409,7 +421,6 @@ class PlayState extends kek.GameState {
     if (pullCount >= Const.LETHAL_MOB_SIZE) {
       kingDead = true;
       if (!gameOver) initGameOver();
-      gameOver = true;
     }
 
     king.setDistressed(kingUnderDistress);
@@ -462,6 +473,10 @@ class PlayState extends kek.GameState {
   var deadTimer = 0.4;
   var newGameTimer = 3.0;
   function stepGameOver(dt : Float) {
+      if (gameoverText != null) {
+        gameoverText.update(dt);
+      }
+
       camZoom *= 0.992;
       if (camZoom < 0.5) {
         camZoom = 0.5;

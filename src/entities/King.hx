@@ -62,7 +62,7 @@ class King extends Entity {
         sprite.play(name);
     }
 
-    var eatTime = 4.0;
+    var eatTime = 6.0;
     var curEatTime = 0.;
 
     var eating = false;
@@ -75,9 +75,12 @@ class King extends Entity {
             return;
         }
 
-        eatTime -= 0.4;
+        eatTime -= 0.2;
         if (eatTime < 0.9) {
-            eatTime = 0.9;
+            eatTime *= 0.991;
+            if (eatTime < 0.5) {
+                eatTime = 0.5;
+            }
         }
 
         var foodItem = playState.foodPile.popFoodItem();
@@ -96,6 +99,8 @@ class King extends Entity {
 
         eatTimeout = 0.6;
         removeFoodTimeout = 0.2;
+        sprite.stop();
+        sprite.play("Eat", true, true);
     }
 
     var eatTimeout = 0.0;

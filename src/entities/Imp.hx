@@ -109,6 +109,7 @@ class Imp extends Entity {
     var foodPileOffsetY = Math.random() * 2 - 1.0;
 
     public function kill(impactX, impactY) {
+        playState.playerKillCount++;
         // Spawn imp corpse
         new entities.Corpse(this.parent, x, y, impactX, impactY);
         this.remove();
